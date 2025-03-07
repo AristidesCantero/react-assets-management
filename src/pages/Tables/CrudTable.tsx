@@ -37,6 +37,9 @@ const CrudTable: React.FC<CrudTableProps> = ({
     const [columnFiltering, setColumnFiltering] = useState<ColumnFiltersState>([]);
     const [sorting,setSorting] = useState<any[]>([]);
     const [columns, setColumns] = useState<ColumnDef<PresentationStyle, any>[]>([ ]);
+    const [paginationButtons, setPaginationButtons] = useState<any[]>([]); 
+    const currentPaginationPage = 1;
+    const paginationGroupLimit = 11;
     const [pagination, setPagination] = React.useState<PaginationState>({
         pageIndex: 0,
         pageSize: 10,
@@ -82,6 +85,33 @@ const CrudTable: React.FC<CrudTableProps> = ({
 
 
     useEffect(() => {
+        console.log("creador de botones llamado")
+        let start = Math.max(0, currentPaginationPage - Math.floor(paginationGroupLimit / 2));
+        let end = Math.min(start + paginationGroupLimit, table.getPageCount()+1);
+        
+        if (end === table.getPageCount()) {
+            start = Math.max(1, end - paginationGroupLimit);
+        }
+        let buttons: any[] = [];
+        console.log('start: ', start, 'end: ', end);
+
+        for (let i = start; i < end-1; i++) {
+            buttons.push(
+                <div key={'pagination-'+i+1}>
+                    <button
+                    className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 border-0 border-s border-gray-700 rounded-e hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                    onClick={() => {table.setPageIndex(i);}}
+                    >
+                        {i+1}
+                    </button>
+                </div>
+            );
+        }
+
+        setPaginationButtons(buttons);
+    }, [sorting, filtering, columnFiltering, columnVisibility, pagination, columns]);
+
+    useEffect(() => {
         fetch(API_URL).then((response) => response.json())
         .then((data) => {
             const parsedElements: any[] = [];
@@ -115,45 +145,40 @@ const CrudTable: React.FC<CrudTableProps> = ({
     return (
         <div className="max-w-[1000px] mx-auto">
 
-            <div className="block mb-4 mx-auto border-b border-slate-300 pb-2 max-w-[360px]">
-                    <a target='_blank' className='block w-full px-4 py-2 text-center text-slate-700 transition-all '>
-                            More components on <b>Material Tailwind</b>.
-                        </a>
-            </div>
-
-
-
             <div className="relative flex flex-col w-full h-full text-slate-700 bg-white bg-opacity-100 shadow-md rounded-xl bg-clip-border">
 
-            <div className="relative mx-4 mt-4 overflow-hidden text-slate-700 bg-white rounded-none bg-clip-border">
-            <div className="flex items-center justify-between ">
-                <div>
-                    <h3 className="text-lg font-semibold text-slate-800">Employees List</h3>
-                    <p className="text-slate-500">Review each person before edit</p>
+                {/*Upper text*/}
+                <div className="relative mx-4 mt-4 overflow-hidden text-slate-700 bg-white rounded-none bg-clip-border">
+                    <div className="flex items-center justify-between ">
+                        <div>
+                            <h3 className="text-lg font-semibold text-slate-800">Employees List</h3>
+                            <p className="text-slate-500">Review each person before edit</p>
+                        </div>
+                        <div className="flex flex-col gap-2 shrink-0 sm:flex-row">
+                        <button className="rounded border border-slate-300 py-2.5 px-3 text-center text-xs font-semibold text-slate-600 transition-all hover:opacity-75 
+                                        focus:ring focus:ring-slate-300 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                                type="button"> 
+                                View All 
+                        </button>
+
+                    
+                        <button
+                                className="flex select-none items-center gap-2 rounded bg-slate-800 py-2.5 px-4 text-xs font-semibold text-white shadow-md shadow-slate-900/10 transition-all hover:shadow-lg hover:shadow-slate-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                                type="button" onClick={() => {setHandleCreate(true,-1) }} disabled={setHandleCreate === undefined}>
+                                <svg className="w-6 h-6 text-blue-300 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                                        d="M15 5v14m-8-7h2m0 0h2m-2 0v2m0-2v-2m12 1h-6m6 4h-6M4 19h16c.5523 0 1-.4477 1-1V6c0-.55228-.4477-1-1-1H4c-.55228 0-1 .44772-1 1v12c0 .5523.44772 1 1 1Z"/>
+                                </svg>
+                                Add member
+                        </button>
+
+                    
+                        </div>
+                    </div>
+            
                 </div>
-                <div className="flex flex-col gap-2 shrink-0 sm:flex-row">
-                    <button className="rounded border border-slate-300 py-2.5 px-3 text-center text-xs font-semibold text-slate-600 transition-all hover:opacity-75 
-                                       focus:ring focus:ring-slate-300 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                            type="button"> 
-                            View All 
-                    </button>
 
-                
-                    <button
-                            className="flex select-none items-center gap-2 rounded bg-slate-800 py-2.5 px-4 text-xs font-semibold text-white shadow-md shadow-slate-900/10 transition-all hover:shadow-lg hover:shadow-slate-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                            type="button" onClick={() => {setHandleCreate(true,-1) }} disabled={setHandleCreate === undefined}>
-                            <svg className="w-6 h-6 text-blue-300 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
-                                    d="M15 5v14m-8-7h2m0 0h2m-2 0v2m0-2v-2m12 1h-6m6 4h-6M4 19h16c.5523 0 1-.4477 1-1V6c0-.55228-.4477-1-1-1H4c-.55228 0-1 .44772-1 1v12c0 .5523.44772 1 1 1Z"/>
-                            </svg>
-                            Add member
-                    </button>
-
-                </div>
-            </div>
-        
-        </div>
-
+                {/* Input and table */}
                 <div className="p-0 overflow-scroll">
 
                     <input type="text" value={filtering} onChange={(e) => {setFiltering(e.target.value)}}/>
@@ -195,8 +220,6 @@ const CrudTable: React.FC<CrudTableProps> = ({
                             }
                         </thead>
                         <tbody>
-
-
                             {           
                                 table.getRowModel().rows.map((row) =>(
                                     
@@ -205,12 +228,12 @@ const CrudTable: React.FC<CrudTableProps> = ({
                                             <div className="flex items-center">
                                             <img src={"http://localhost:5173/src/pages/Resources/Images/iamgen-negocio.png"}
                                                     alt="John Michael" 
-                                                    className="relative inline-block h-15 w-15 !rounded-full object-cover object-center" />
+                                                    className="relative inline-block h-12 w-12 !rounded-full object-cover object-center" />
                                             </div>
                                         </td>
 
                                         {row.getVisibleCells().map((cell) => (
-                                            <td className="p-4 border-b border-slate-200 max-w-[1000px]" 
+                                            <td className="border-b border-slate-200 max-w-[1000px]" 
                                                 key={cell.id}>
                                                     <div className="flex flex-col gap-3">
                                                         <span className="h-full text-sm font-semibold text-slate-500 truncate align-bottom">
@@ -221,29 +244,43 @@ const CrudTable: React.FC<CrudTableProps> = ({
                                         ))}
                                         
                                         {setHandleUpdate && (
-                                            <td className="p-4 border-b border-slate-200">
-                                                <button onClick={() => { setHandleUpdate(true,row.original.id); }}>Edit</button>
+                                            <td className="border-b border-slate-200">
+                                                <div className="text-sm font-medium leading-5 text-center whitespace-no-wrap border-gray-200 ">
+                                                <a href="#" className="show-icon">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" 
+                                                        className="text-green-400 hover:text-green-800" viewBox="0 0 16 16"
+                                                        onClick={() => { setHandleUpdate(true,row.original.id); }}>
+                                                        <path d="M15.825.12a.5.5 0 0 1 .132.584c-1.53 3.43-4.743 8.17-7.095 10.64a6.1 6.1 0 0 1-2.373 1.534c-.018.227-.06.538-.16.868-.201.659-.667 1.479-1.708 1.74a8.1 8.1 0 0 1-3.078.132 4 4 0 0 1-.562-.135 1.4 1.4 0 0 1-.466-.247.7.7 0 0 1-.204-.288.62.62 0 0 1 .004-.443c.095-.245.316-.38.461-.452.394-.197.625-.453.867-.826.095-.144.184-.297.287-.472l.117-.198c.151-.255.326-.54.546-.848.528-.739 1.201-.925 1.746-.896q.19.012.348.048c.062-.172.142-.38.238-.608.261-.619.658-1.419 1.187-2.069 2.176-2.67 6.18-6.206 9.117-8.104a.5.5 0 0 1 .596.04"/>
+                                                    </svg>
+                                                </a>
+                                            </div>
                                             </td>
                                         )}
                                         {setHandleView && (
-                                            <td className="p-4 border-b border-slate-200"> 
-                                            <div className="text-sm font-medium leading-5 text-center whitespace-no-wrap border-b border-gray-200 " onClick={() => { setHandleView(true,row.original.id); }}>
-                                                <a href="#" className="text-gray-600 hover:text-gray-900 show-icon">
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                                                    stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                            <td className="border-b border-slate-200"> 
+                                            <div className="text-sm font-medium leading-5 text-center whitespace-no-wrap border-gray-200 ">
+                                                <a href="#" className="show-icon">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" 
+                                                        className="text-blue-400 hover:text-blue-800" viewBox="0 0 16 16"
+                                                        onClick={() => { setHandleView(true,row.original.id); }}>
+                                                    <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
+                                                    <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
                                                 </svg>
                                                 </a>
                                             </div>
-                                                {/* <button onClick={() => { setHandleView(true,row.original.id); }}>View</button> */}
                                             </td>
                                         )}
                                         {setHandleDelete && (
-                                            <td className="p-4 border-b border-slate-200">
-                                                <button onClick={() => { setHandleDelete(true,row.original.id); }}>Delete</button>
+                                            <td className="border-b border-slate-200">
+                                                <div className="text-sm font-medium leading-5 text-center whitespace-no-wrap border-gray-200 ">
+                                                <a href="#" className="show-icon">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" 
+                                                        className="text-gray-600 hover:text-red-600" viewBox="0 0 16 16"
+                                                        onClick={() => { setHandleDelete(true,row.original.id); }}>
+                                                        <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
+                                                </svg>
+                                                </a>
+                                            </div>
                                             </td>
                                         )}
                                     </tr>
@@ -267,80 +304,36 @@ const CrudTable: React.FC<CrudTableProps> = ({
                     </table>
                 </div>
 
+                {/* Pagination */}
+                <div className="flex justify-center mt-4">
 
-                <div className="flex items-center gap-2">
-                    <button
-                    className="border rounded p-1"
-                    onClick={() => {table.firstPage(); console.log("presionado");}}
-                    disabled={!table.getCanPreviousPage()}
-                    >
-                        {'<<'}
-                    </button>
-                    <button
-                    className="border rounded p-1"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                    >
-                        {'<'}
-                    </button>
-                    <button
-                    className="border rounded p-1"
-                    onClick={() => {table.nextPage()}}
-                    disabled={!table.getCanNextPage()}
-                    >
-                        {'>'}
-                    </button>
-                    <button
-                    className="border rounded p-1"
-                    onClick={() => {table.setPageIndex(table.getPageCount()); console.log(table.getPageCount());}}
-                    disabled={!table.getCanNextPage()}
-                    >
-                        {'>>'}
-                    </button>
-
-                    <span className="flex items-center gap-1">
-                    <div>Page</div>
-                    <strong>
-                        {table.getState().pagination.pageIndex + 1} of{' '}
-                        {table.getPageCount().toLocaleString()}
-                    </strong>
-                    </span>
-
-                    <span className="flex items-center gap-1">
-                    | Go to page:
-                    <input
-                        type="number"
-                        min="1"
-                        max={table.getPageCount()}
-                        defaultValue={table.getState().pagination.pageIndex + 1}
-                        onChange={e => {
-                        const page = e.target.value ? Number(e.target.value) - 1 : 0
-                        table.setPageIndex(page)
-                        }}
-                        className="border p-1 rounded w-16"
-                    />
-                    </span>
-
-                    <select
-                    value={table.getState().pagination.pageSize}
-                    onChange={e => {
-                        table.setPageSize(Number(e.target.value))
-                    }}
-                    >
-                    {[10, 20, 30, 40, 50].map(pageSize => (
-                        <option key={pageSize} value={pageSize}>
-                        Show {pageSize}
-                        </option>
-                    ))}
-                    </select>
+                    <div className="flex flex-col items-center">
+                        <div className="flex items-center gap-2 mt-4">
+                            <span className="text-sm text-gray-700 dark:text-gray-400"> Showing <span className="font-semibold text-gray-900 dark:text-white">1</span> to <span className="font-semibold text-gray-900 dark:text-white">10</span> of <span className="font-semibold text-gray-900 dark:text-white">100</span> Entries </span>
+                        </div>
+                        <div className="flex items-center mt-2">
+                            <button className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white "
+                            onClick={() => {table.getState().pagination.pageIndex>0 ? table.setPageIndex(table.getState().pagination.pageIndex - 1): null;}}>
+                                <svg className="w-3.5 h-3.5 me-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 5H1m0 0 4 4M1 5l4-4"/>
+                                </svg>
+                                Prev
+                            </button>
+                                {
+                                    (paginationButtons && paginationButtons.map((button) => button))
+                                }
+                            <button className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 border-0 border-s border-gray-700 rounded-e hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                            onClick={() => {table.getState().pagination.pageIndex<table.getPageCount()-1 ? table.setPageIndex(table.getState().pagination.pageIndex + 1): null;}}>
+                                Next
+                                <svg className="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                            </svg>
+                            </button>
+                        </div>
+                    </div>
 
                 </div>
 
-
-                <div>
-                    Showing {table.getRowModel().rows.length.toLocaleString()} of{' '}
-                    {table.getRowCount().toLocaleString()} Rows
-                </div>
 
             </div>
             
