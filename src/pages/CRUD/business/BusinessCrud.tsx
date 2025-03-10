@@ -20,11 +20,11 @@ const crudToMethod: { [key in propsBusinessCreate['crudType']]: 'post' | 'put' |
 }
 const variantTypes = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'] as const;
 const defaultBusiness = { id: 0, name: '', tin: '', utr: '', creation_date: new Date(), update_date: new Date() };
-const crudTranslations: { [key in propsBusinessCreate['crudType']]: [string, typeof variantTypes[number]] } = {
-    'create': ['creada', variantTypes[2]],
-    'update': ['actualizada', variantTypes[1]],
-    'delete': ['eliminada', variantTypes[4]],
-    'view': ['vista', variantTypes[5]]
+const crudTranslations: { [key in propsBusinessCreate['crudType']]: [string, typeof variantTypes[number], string] } = {
+    'create': ['creada', variantTypes[2], 'Creación'],
+    'update': ['actualizada', variantTypes[1], 'Actualización'],
+    'delete': ['eliminada', variantTypes[4], 'Eliminación'],
+    'view': ['vista', variantTypes[5], 'Visualización']
 };
 
 const validationSchema = Yup.object({
@@ -201,12 +201,15 @@ let BusinessCrud: React.FC<propsBusinessCreate> = ({ isOpen, onHide, apiInfo, cr
 
 
     return (
-            <div style={{width: '100%', height: '100%', zIndex: 1000}}>
-                <Modal size="lg" show={isOpen} onHide={()=>{onHideSelf('primary','Ventana cerrada','Retorno')}} aria-labelledby="contained-modal-title-vcenter" centered>
+            <div>
+                <Modal 
+                    size="lg" show={isOpen} 
+                    onHide={()=>{onHideSelf('primary','Ventana cerrada','Retorno')}} 
+                    aria-labelledby="contained-modal-title-vcenter" centered>
 
                     <Modal.Header closeButton>
                         <Modal.Title id="contained-modal-title-vcenter">
-                        <h1>Desplegado</h1> Modal heading {crudType}
+                        <p className='font-bold text-3xl'>{crudTranslations[crudType][2]} de Información de empresa</p> 
                         </Modal.Title>
                     </Modal.Header>
 
@@ -214,38 +217,51 @@ let BusinessCrud: React.FC<propsBusinessCreate> = ({ isOpen, onHide, apiInfo, cr
 
                     <Modal.Body>
 
-                        <form onSubmit={formik.handleSubmit}>
-                            <div className='mb-3'>
-                                <label htmlFor="name" className="block text-sm font-medium text-black">Nombre</label>
-                                <input id="name" type="text" placeholder={defaultData.name} 
+                        <form onSubmit={formik.handleSubmit} className="grid grid-cols-2 gap-4">
+                            <div className='grid grid-cols-1 gap-1'>
+                                <label htmlFor="name" className="block font-serif text-gray-700 text-xl">Nombre</label>
+                                <input className='bg-gray-100 w-10/12 h-10 rounded-sm border-2 border-black focus:bg-gray-300' 
+                                        id="name" 
+                                        type="text" 
+                                        placeholder={defaultData.name} 
                                         onChange={formik.handleChange} value={formik.values.name}
                                         disabled={disabled}
-                                />
+                                        />
                                 {formik.errors.name && ( <div className="text-red-500 text-sm mt-1">{formik.errors.name}</div> )}
                             </div>
-                            <div className='mb-3'>
-                            <label htmlFor="tin" className="block text-sm font-medium text-black">TIN</label>
-                                <input id="tin" type="text" placeholder={defaultData.tin}
-                                    onChange={formik.handleChange} value={formik.values.tin} disabled={disabled}
+                            <div className='grid grid-cols-1 gap-1'>
+                            <label htmlFor="tin" className="block font-serif text-gray-700 text-xl">TIN</label>
+                                <input className='bg-gray-200 w-10/12 h-10 rounded-sm border-2 border-black focus:bg-gray-400'
+                                        id="tin" 
+                                        type="text" 
+                                        placeholder={defaultData.tin}
+                                        onChange={formik.handleChange} value={formik.values.tin} disabled={disabled}
                                 />
                                 {formik.errors.tin && ( <div className="text-red-500 text-sm mt-1">{formik.errors.tin}</div> )}
                             </div>
 
-                            <div className='mb-3'>
-                            <label htmlFor="utr" className="block text-sm font-medium text-black">UTR</label>
-                                <input id="utr" type="text" placeholder={defaultData.utr}
-                                    onChange={formik.handleChange} value={formik.values.utr} disabled={disabled}
+                            <div className='grid grid-cols-1 gap-1'>
+                            <label htmlFor="utr" className="block font-serif text-gray-700 text-xl">UTR</label>
+                                <input className='bg-gray-200 w-10/12 h-10 rounded-sm border-2 border-black focus:bg-gray-400'
+                                        id="utr" 
+                                        type="text" 
+                                        placeholder={defaultData.utr}
+                                        onChange={formik.handleChange} value={formik.values.utr} disabled={disabled}
                                 />
                                 {formik.errors.utr && ( <div className="text-red-500 text-sm mt-1">{formik.errors.utr}</div> )}
                             </div>
                             
-                            <Button className="col-1" type='submit' >Cargar</Button>
+                            <div className="col-span-2 flex mt-4 justify-center">
+                                <Button className="text-white bg-[#050708] hover:bg-[#050708]/90 focus:ring-4 focus:outline-none focus:ring-[#050708]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#050708]/50 dark:hover:bg-[#050708]/30 me-2 mb-2" 
+                                type='submit'>Cargar</Button>
+                            </div>
+                            {/* <Button className="w-1/10" type='submit' >Cargar</Button> */}
                             
                         </form>
 
                     </Modal.Body>
 
-        </Modal>
+            </Modal>
             </div>
             )
 }
