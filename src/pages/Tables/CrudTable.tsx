@@ -12,7 +12,8 @@ import {Column, ColumnDef, Table, flexRender, ColumnFiltersState, VisibilityStat
 
 interface CrudTableProps {
     API_URL: string;
-    alertContext: {};
+    handleCrudContext: {handleCrud: 'create' | 'update' | 'delete' | 'view' | '', handleId?: number};
+    dialogVisible: boolean;
     objectType?: {};
     searchableColumns?: string[];
     setHandleCreate: (value: boolean, id: number) => void;
@@ -32,7 +33,7 @@ const CrudTable: React.FC<CrudTableProps> = ({
     API_URL, objectType, 
     setHandleCreate, setHandleDelete, 
     setHandleUpdate, setHandleView , 
-    searchableColumns, discardedColumns, alertContext}) => {
+    searchableColumns, discardedColumns, handleCrudContext, dialogVisible}) => {
     const [elements, setElements] = useState<any[]>([]);
     const [filtering, setFiltering] = useState<string>('');
     const [columnFiltering, setColumnFiltering] = useState<ColumnFiltersState>([]);
@@ -112,20 +113,14 @@ const CrudTable: React.FC<CrudTableProps> = ({
         setPaginationButtons(buttons);
     }, [sorting, filtering, columnFiltering, columnVisibility, pagination, columns]);
 
+
     useEffect(() => {
-        fetch(API_URL).then((response) => response.json())
-        .then((data) => {
-            const parsedElements: any[] = [];
-            data.map((element: any) => { parsedElements.push(element); });
-            const dictionary = parsedElements.map((element) => 
-            {
-                return Object.entries(element).reduce((acc, [key, value]) => 
-                { acc[key] = value; return acc; }, {} as { [key: string]: any });
-            });
-            setElements(dictionary);
-            })
-            .catch((error) => { console.log("Fetch de CrudTable con django ha fallado para " + typeof objectType); });
-    }, [alertContext]);
+        fetchApiData();
+    }, [handleCrudContext]);
+
+    useEffect(() => {
+        fetchApiData();
+    }, []);
 
     useEffect(() => {
         const newColumns = Object.keys(elements[0] || {}).map((key) => ({
@@ -141,6 +136,21 @@ const CrudTable: React.FC<CrudTableProps> = ({
         setColumns(newColumns);
     }, [elements]);
 
+
+    function fetchApiData(){
+        fetch(API_URL).then((response) => response.json())
+        .then((data) => {
+            const parsedElements: any[] = [];
+            data.map((element: any) => { parsedElements.push(element); });
+            const dictionary = parsedElements.map((element) => 
+            {
+                return Object.entries(element).reduce((acc, [key, value]) => 
+                { acc[key] = value; return acc; }, {} as { [key: string]: any });
+            });
+            setElements(dictionary);
+            })
+            .catch((error) => { console.log("Fetch de CrudTable con django ha fallado para " + typeof objectType); });
+    }
     
 
     return (

@@ -16,6 +16,7 @@ interface windowState{
     dialogVisible: boolean;
     alertContext: {variant: typeof variantTypes[number], 
         message: string, heading: string};
+    dataHaveBeenFetched: boolean;
 }
 
 class Business extends Component <{},windowState> {
@@ -24,7 +25,8 @@ class Business extends Component <{},windowState> {
         this.state = {
             handleCrudContext: {handleCrud:''},
             dialogVisible: false,
-            alertContext: {variant: 'primary', message: '', heading: ''}
+            alertContext: {variant: 'primary', message: '', heading: ''},
+            dataHaveBeenFetched: false
         }
     }
 
@@ -44,7 +46,9 @@ class Business extends Component <{},windowState> {
 
 
     // CRUD operations
-    setCrudDialogInvisible = () => { this.setState({dialogVisible: false, handleCrudContext: {handleCrud:'', handleId:undefined}}); }
+    setCrudDialogInvisible = () => {
+         this.setState({dialogVisible: false, handleCrudContext: {handleCrud:'', handleId:undefined}}); 
+        }
     setCrudDialogVisible = () => { this.setState({dialogVisible: true}); }
     setHandleCreate = (value: boolean, id: number) => {
         this.setState({handleCrudContext: {handleCrud: 'create', handleId: id}, dialogVisible: true});
@@ -77,7 +81,8 @@ class Business extends Component <{},windowState> {
                     <div className="layout_content">
                         <h1>Business {this.state.handleCrudContext.handleCrud}</h1>
                         <CrudTable  
-                            alertContext={this.state.alertContext}
+                            handleCrudContext={this.state.handleCrudContext}
+                            dialogVisible={this.state.dialogVisible}
                             API_URL="http://127.0.0.1:8000/locations/business" 
                             objectType={{} as Business} 
                             setHandleCreate={this.setHandleCreate} 
