@@ -10,27 +10,32 @@ import { Link } from 'react-router-dom';
 
 const permissionList = ['listas','usuarios','creacion']
 
-class Home extends Component <{},{elements: Business[]}>{
+const variantTypes = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'] as const;
+
+interface windowState{
+    alertContext: {variant: typeof variantTypes[number], 
+        message: string, heading: string};
+}
+
+class Home extends Component <{},windowState>{
     constructor(props){
         super(props);
         this.state = {
-            elements:[],
+            alertContext: {variant: 'primary', message: '', heading: ''}
         }
     }
 
     componentDidMount(): void {
-        fetch('http://127.0.0.1:8000/locations/business')
-        .then((response) => response.json())
-        .then( (data)=>
-            {
-                const parsedElements: any[] = []; 
-                data.map( (business) => {parsedElements.push(business)} );
-                this.setState({ elements: parsedElements });
-            } )
-        //.then( () => {console.log('estado: '+this.state);} ) 
-        .catch( (error) => {console.log("Fetch con django ha fallado");} );
+        this.setState({
+            alertContext: {variant: 'success', message: 'Bienvenido a la aplicación', heading: 'Exito'},
+        });
     }
 
+    //Alert operations
+    sendAndShowAlertMessage = (variant: typeof variantTypes[number], message: string, heading: string) => {
+        this.setState({alertContext: {variant: variant, message: message, heading: heading}});
+    }
+    hideAlertContext = () => { this.setState({alertContext: {variant:"primary",message:"", heading:""}}); }
 
 
     render(){
@@ -41,7 +46,7 @@ class Home extends Component <{},{elements: Business[]}>{
         ];
         return (
             <div className='body-frame'>
-                <HomeHeader />
+                <HomeHeader alertContext={this.state.alertContext} onClose={this.hideAlertContext}/>
                 <HomeLayout text={"Home"} redirections={redirections}/>
                 <HomeFooter />
             </div>

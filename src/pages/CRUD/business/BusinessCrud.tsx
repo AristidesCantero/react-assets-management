@@ -104,8 +104,9 @@ let BusinessCrud: React.FC<propsBusinessCreate> = ({ isOpen, onHide, apiInfo, cr
         setApiUrl('');
         setFormData({ id: 0, name: '', tin: '', utr: '', creation_date: new Date(), update_date: new Date() });
         setHasData(false);
-        sendAndShowAlertMessage(variant, message, heading);
         onHide();
+        sendAndShowAlertMessage(variant, message, heading);
+        
     }
 
     function onError(){
@@ -138,54 +139,13 @@ let BusinessCrud: React.FC<propsBusinessCreate> = ({ isOpen, onHide, apiInfo, cr
             .then(response => response.data)
             .then((data) => {
                 console.log(crudTranslation)
-                message = 'La empresa '+data.name+' ha sido '+crudTranslation+' correctamente';
-                heading = 'Empresa '+crudTranslation;
+                message = 'La empresa "'+data.name+'" ha sido '+crudTranslation[0]+' correctamente';
+                heading = 'Empresa '+crudTranslation[0];
                 variant = 'success';
                 onHideSelf(variant, message, heading);
             }).catch((error) => {console.log('error en empresa en '+httpMethod); console.log(error); onHideSelf(onError().variant, onError().message, onError().heading) });
 
-        // if (crudType === 'delete') {
-        //     axios.request({
-        //         url: apiUrl, 
-        //         method: 'delete', 
-        //         data: jsonValue, headers: { 'Content-Type': 'application/json' }})
-        //     .then(response => response.data)
-        //     .then((data) => {
-        //         message = 'La empresa '+data.name+' ha sido eliminada';
-        //         heading = 'Elemento eliminado';
-        //         variant = variantTypes[5];
-        //         onHideSelf(variant, heading, message);
-        //     })
-        //     .catch((error) => {console.log('error al borrar'); onHideSelf(onError().variant, onError().message, onError().heading); });
-        //     return;
-        // }
-
-        // if (crudType === 'create') {
-        //     axios.post(apiUrl, 
-        //         { name: values.name, tin: values.tin, utr: values.utr },
-        //         { headers: { 'Content-Type': 'application/json' } })
-        //     .then(response => response.data)
-        //     .then((data) => {
-        //         message = 'La empresa '+data.name+' ha sido creada correctamente';
-        //         heading = 'Creado exitoso';
-        //         variant = 'success';
-        //         onHideSelf(variant, message, heading);
-        //     })
-        //     .catch((error) => {console.log('error al crear'); console.log(error); onHideSelf(onError().variant, onError().message, onError().heading) });
-        //     return;
-        // }
-
-        // if (crudType === 'update') {
-        //     axios.put(apiUrl, jsonValue).then(response => response.data)
-        //     .then((data) => { 
-        //         message = 'La empresa '+data.name+' ha sido actualizada exitosamente';
-        //         heading = 'Empresa modificada';
-        //         variant = variantTypes[2];
-        //         onHideSelf( variant, message, heading);
-        //     })
-        //     .catch((error) => {console.log('error al actualizar'); onHideSelf(onError().variant, onError().message, onError().heading); });
-        //     return;
-        // }
+        
 
         onHide();
 

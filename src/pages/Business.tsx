@@ -11,19 +11,17 @@ import Alerta from './Alerts/Alert';
 
 const variantTypes = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'] as const;
 
-interface stateBusiness{
-    elements: any[];
+interface windowState{
     handleCrudContext: {handleCrud: 'create' | 'update' | 'delete' | 'view' | '', handleId?: number};
     dialogVisible: boolean;
     alertContext: {variant: typeof variantTypes[number], 
         message: string, heading: string};
 }
 
-class Business extends Component <{},stateBusiness> {
+class Business extends Component <{},windowState> {
     constructor(props){
         super(props);
         this.state = {
-            elements:[],
             handleCrudContext: {handleCrud:''},
             dialogVisible: false,
             alertContext: {variant: 'primary', message: '', heading: ''}
@@ -37,13 +35,15 @@ class Business extends Component <{},stateBusiness> {
         });
     }
 
+
+    //Alert operations
     sendAndShowAlertMessage = (variant: typeof variantTypes[number], message: string, heading: string) => {
         this.setState({alertContext: {variant: variant, message: message, heading: heading}});
     }
-
-
     hideAlertContext = () => { this.setState({alertContext: {variant:"primary",message:"", heading:""}}); }
 
+
+    // CRUD operations
     setCrudDialogInvisible = () => { this.setState({dialogVisible: false, handleCrudContext: {handleCrud:'', handleId:undefined}}); }
     setCrudDialogVisible = () => { this.setState({dialogVisible: true}); }
     setHandleCreate = (value: boolean, id: number) => {
@@ -72,12 +72,13 @@ class Business extends Component <{},stateBusiness> {
     render(){
         return(
             <div className='body-frame'>
-                <HomeHeader />
+                <HomeHeader  alertContext={this.state.alertContext} onClose={this.hideAlertContext} />
                 <div className="main_layout" >
                     <div className="layout_content">
                         <h1>Business {this.state.handleCrudContext.handleCrud}</h1>
-                        <Alerta  alertContext={this.state.alertContext} onClose={this.hideAlertContext} />
-                        <CrudTable  API_URL="http://127.0.0.1:8000/locations/business" 
+                        <CrudTable  
+                            alertContext={this.state.alertContext}
+                            API_URL="http://127.0.0.1:8000/locations/business" 
                             objectType={{} as Business} 
                             setHandleCreate={this.setHandleCreate} 
                             setHandleDelete={this.setHandleDelete} 

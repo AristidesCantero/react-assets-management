@@ -12,6 +12,7 @@ import {Column, ColumnDef, Table, flexRender, ColumnFiltersState, VisibilityStat
 
 interface CrudTableProps {
     API_URL: string;
+    alertContext: {};
     objectType?: {};
     searchableColumns?: string[];
     setHandleCreate: (value: boolean, id: number) => void;
@@ -31,7 +32,7 @@ const CrudTable: React.FC<CrudTableProps> = ({
     API_URL, objectType, 
     setHandleCreate, setHandleDelete, 
     setHandleUpdate, setHandleView , 
-    searchableColumns, discardedColumns}) => {
+    searchableColumns, discardedColumns, alertContext}) => {
     const [elements, setElements] = useState<any[]>([]);
     const [filtering, setFiltering] = useState<string>('');
     const [columnFiltering, setColumnFiltering] = useState<ColumnFiltersState>([]);
@@ -124,7 +125,7 @@ const CrudTable: React.FC<CrudTableProps> = ({
             setElements(dictionary);
             })
             .catch((error) => { console.log("Fetch de CrudTable con django ha fallado para " + typeof objectType); });
-    }, []);
+    }, [alertContext]);
 
     useEffect(() => {
         const newColumns = Object.keys(elements[0] || {}).map((key) => ({

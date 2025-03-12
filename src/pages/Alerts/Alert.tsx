@@ -28,24 +28,30 @@ let Alerta: React.FC<propsAlerta> = ({alertContext, onClose}) => {
         setTimeout(() => {
             onClose();
             setAlertShow(false);
-        }, 3000);
+        }, 5000);
     },
         [alertContext]);
 
 
     return (
             alertShow && (
-                <Collapse in={alertShow}>
-                <Alert variant={alertContext.variant} onClose={() => setAlertShow(false)} dismissible>
-                    <Alert.Heading>Mensaje de {alertContext.heading}</Alert.Heading>
-                    <p>{alertContext.message}</p>
-                    <hr/>
-                    <div className="d-flex justify-content-end">
-                        <Button onClick={() => { setAlertShow(false); onClose(); }} variant="outline-success">
-                        Close me
-                        </Button>
+                <Collapse className="grid grid-cols-12" in={alertShow}>
+                    <div>   
+                        <div className="col-span-2"></div>
+                        <div className="w-1/1 h-auto col-span-8 opacity-95">
+                            <Alert variant={alertContext.variant} onClose={() => setAlertShow(false)} dismissible>
+                                <Alert.Heading>Mensaje de {alertContext.heading}</Alert.Heading>
+                                <p>{alertContext.message}</p>
+                                <hr/>
+                                <div className="d-flex justify-content-end opacity-100">
+                                    <Button onClick={() => { setAlertShow(false); onClose(); }} variant="outline-success">
+                                    Close me
+                                    </Button>
+                                </div>
+                            </Alert>
+                        </div>
+                        <div className="col-span-2"></div>
                     </div>
-                </Alert>
                 </Collapse>
             )
     )

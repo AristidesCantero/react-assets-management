@@ -1,17 +1,51 @@
 import { Component } from "react";
 import React from "react";
 
+import Alerta from '../Alerts/Alert';
+
+
 import { Link } from "react-router-dom";
 
+interface homeHeaderProps {
+    alertContext: {
+        message: string;
+        heading: string;
+        variant: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark';
+    },
+    onClose: () => void;
 
-class HomeHeader extends Component {
+}
+
+interface homeHeaderState {
+    alertContext: {
+        message: string;
+        heading: string;
+        variant: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark';
+    },
+    onClose: () => void;
+}
+
+class HomeHeader extends Component <homeHeaderProps, homeHeaderState> {
     constructor(props){
         super(props);
         this.state = {
+           alertContext: props.alertContext,
+           onClose: props.onClose
         }
-        }
+    }
+
 
     componentDidMount(): void {
+
+    }
+
+    componentDidUpdate(prevProps: homeHeaderProps): void {
+        if (prevProps.alertContext !== this.props.alertContext) {
+            this.setState({ alertContext: this.props.alertContext });
+        }
+        if (prevProps.onClose !== this.props.onClose) {
+            this.setState({ onClose: this.props.onClose });
+        }
     }
 
     
@@ -42,7 +76,12 @@ class HomeHeader extends Component {
                     
                 </div>
             </div>   
+
+            <div className="hero_alert">
+                <Alerta alertContext={this.state.alertContext} onClose={this.props.onClose} />
+            </div>
                
+            
         </div>
     )
    }
