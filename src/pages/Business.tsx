@@ -90,7 +90,6 @@ class Business extends Component <{},windowState> {
                             setHandleUpdate={this.setHandleUpdate}
                             setHandleView={this.setHandleView}
                             discardedColumns={['id', 'creation_date', 'update_date']}/>
-
                         <BusinessCrud
                             apiInfo={ {url: 'http://127.0.0.1:8000/',  base: ['locations','business'], 
                                 id:this.state.handleCrudContext.handleId}}
