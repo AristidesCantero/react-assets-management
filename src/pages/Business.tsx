@@ -4,7 +4,7 @@ import HomeHeader from './HomeComponents/HomeHeader';
 import HomeLayout from './HomeComponents/HomeLayout';
 import HomeFooter from './HomeComponents/HomeFooter';
 
-import CrudTable from './Tables/CrudTable';
+import CrudTable from '../components/Tables/CrudTable';
 import BusinessCrud from './CRUD/business/BusinessCrud';
 import Alerta from './Alerts/Alert';
 

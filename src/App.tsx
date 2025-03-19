@@ -3,6 +3,7 @@ import './App.css'
 import { BrowserRouter, Route, Routes } from 'react-router';
 import Home from './pages/Home';
 import Business from './pages/Business';
+import Tests from './pages/Tests';
 
 
 class App extends Component{
@@ -22,6 +23,7 @@ class App extends Component{
             <Route index element={<Home/>} />
             <Route path="/Home" element={<Home/>} />
             <Route path="/Business" element={<Business/>} />
+            <Route path="/Tests" element={<Tests/>}/>
             <Route path="*" element={<Home/>}/>
           </Routes>
         </BrowserRouter>

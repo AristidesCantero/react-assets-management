@@ -2,7 +2,7 @@ import React from "react";
 import Filter from "./columnFilters";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import es from "../lang/es";
+import es from "../../pages/lang/es";
 
 
 import {Column, ColumnDef, Table, flexRender, ColumnFiltersState, VisibilityState,
@@ -29,11 +29,10 @@ interface CrudTableState {
 }
 
 
-const CrudTable: React.FC<CrudTableProps> = ({ 
-    API_URL, objectType, 
-    setHandleCreate, setHandleDelete, 
-    setHandleUpdate, setHandleView , 
+const CrudTable: React.FC<CrudTableProps> = ({ API_URL, objectType, 
+    setHandleCreate, setHandleDelete, setHandleUpdate, setHandleView , 
     searchableColumns, discardedColumns, handleCrudContext, dialogVisible}) => {
+        
     const [elements, setElements] = useState<any[]>([]);
     const [filtering, setFiltering] = useState<string>('');
     const [columnFiltering, setColumnFiltering] = useState<ColumnFiltersState>([]);
@@ -87,7 +86,6 @@ const CrudTable: React.FC<CrudTableProps> = ({
 
 
     useEffect(() => {
-        console.log("creador de botones llamado")
         let start = Math.max(0, currentPaginationPage - Math.floor(paginationGroupLimit / 2));
         let end = Math.min(start + paginationGroupLimit, table.getPageCount()+1);
         

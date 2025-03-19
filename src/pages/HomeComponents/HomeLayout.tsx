@@ -1,7 +1,7 @@
 import { Component } from "react";
 import React from "react";
 import { Business, Location } from "../Interfaces/LocationInterfaces";
-import CrudTable from "../Tables/CrudTable";
+import CrudTable from "../../components/Tables/CrudTable";
 import { Navigate, NavLink, Link, BrowserRouter, Route } from "react-router-dom";
 
 

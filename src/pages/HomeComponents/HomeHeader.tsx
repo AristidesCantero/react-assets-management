@@ -69,7 +69,7 @@ class HomeHeader extends Component <homeHeaderProps, homeHeaderState> {
                     <ul className="menu_bar">
                          <li><Link to={"/Home"}>Inicio</Link></li>
                         <li><Link to={"/Business"}>Listados</Link></li>
-                        <li><Link to={"/About"}>Sobre Nosotros</Link></li>
+                        <li><Link to={"/Tests"}>Testeos</Link></li>
                         <li><Link to={"/Register"}>Registrarse</Link></li>
                         <li><Link to={"/Login"}>Inicie Sesión</Link></li>
                     </ul>
