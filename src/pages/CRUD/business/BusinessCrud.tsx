@@ -103,6 +103,7 @@ let BusinessCrud: React.FC<propsBusinessCreate> = ({ isOpen, onHide, apiInfo, cr
     function onHideSelf(variant: typeof variantTypes[number], message: string, heading: string) {
         setApiUrl('');
         setFormData({ id: 0, name: '', tin: '', utr: '', creation_date: new Date(), update_date: new Date() });
+        setDefaultData({ id: 0, name: '', tin: '', utr: '', creation_date: new Date(), update_date: new Date() });
         setHasData(false);
         onHide();
         sendAndShowAlertMessage(variant, message, heading);
@@ -145,9 +146,6 @@ let BusinessCrud: React.FC<propsBusinessCreate> = ({ isOpen, onHide, apiInfo, cr
                 onHideSelf(variant, message, heading);
             }).catch((error) => {console.log('error en empresa en '+httpMethod); console.log(error); onHideSelf(onError().variant, onError().message, onError().heading) });
 
-        
-
-        onHide();
 
     }
 
