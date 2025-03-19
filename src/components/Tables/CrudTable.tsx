@@ -4,6 +4,11 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import es from "../../pages/lang/es";
 
+import { BusinessAdapter } from "../../adapters/BusinessAdapter";
+import {getAllBusiness} from "../../services/BusinessConsumer";
+import { useAsync, useFetchAndLoad } from "../../hooks/index";
+import { Business } from "@pages/Interfaces/LocationInterfaces";
+
 
 import {Column, ColumnDef, Table, flexRender, ColumnFiltersState, VisibilityState,
         useReactTable, PaginationState, 
@@ -34,6 +39,8 @@ const CrudTable: React.FC<CrudTableProps> = ({ API_URL, objectType,
     searchableColumns, discardedColumns, handleCrudContext, dialogVisible}) => {
         
     const [elements, setElements] = useState<any[]>([]);
+
+    /* TABLE CONSTANTS  */
     const [filtering, setFiltering] = useState<string>('');
     const [columnFiltering, setColumnFiltering] = useState<ColumnFiltersState>([]);
     const [sorting,setSorting] = useState<any[]>([]);
@@ -84,6 +91,13 @@ const CrudTable: React.FC<CrudTableProps> = ({ API_URL, objectType,
         }
     });
 
+    /* END TABLE CONSTANTS */
+
+    /* api consuming variables */
+    const BusinessAdapterInstance = new BusinessAdapter();
+    const {loading, callEndpoint} = useFetchAndLoad();
+
+    /* END api consuming variables */
 
     useEffect(() => {
         let start = Math.max(0, currentPaginationPage - Math.floor(paginationGroupLimit / 2));
@@ -112,15 +126,16 @@ const CrudTable: React.FC<CrudTableProps> = ({ API_URL, objectType,
     }, [sorting, filtering, columnFiltering, columnVisibility, pagination, columns]);
 
 
-    useEffect(() => {
-        fetchApiData();
-    }, [handleCrudContext]);
+    // useEffect(() => {
+    //     // fetchApiData();
+    // }, [handleCrudContext]);
+
+    // useEffect(() => {
+    //     // fetchApiData();
+    // }, []);
 
     useEffect(() => {
-        fetchApiData();
-    }, []);
-
-    useEffect(() => {
+        console.log(elements);
         const newColumns = Object.keys(elements[0] || {}).map((key) => ({
             header: es[key] || key, //key.charAt(0).toUpperCase() + key.slice(1),
             accessorKey: key,
@@ -135,21 +150,21 @@ const CrudTable: React.FC<CrudTableProps> = ({ API_URL, objectType,
     }, [elements]);
 
 
-    function fetchApiData(){
-        fetch(API_URL).then((response) => response.json())
-        .then((data) => {
-            const parsedElements: any[] = [];
-            data.map((element: any) => { parsedElements.push(element); });
-            const dictionary = parsedElements.map((element) => 
-            {
-                return Object.entries(element).reduce((acc, [key, value]) => 
-                { acc[key] = value; return acc; }, {} as { [key: string]: any });
-            });
-            setElements(dictionary);
-            })
-            .catch((error) => { console.log("Fetch de CrudTable con django ha fallado para " + typeof objectType); });
+    const getApiData = async () => {
+        return await callEndpoint(getAllBusiness());
     }
-    
+
+    const adaptData = (data: any) => {
+        let adaptedData = data.map((item: any) => {
+            return BusinessAdapterInstance.adapt(item);
+        });
+        setElements(adaptedData);
+    }
+
+    useAsync(getApiData, adaptData, () => {},[handleCrudContext]);
+    function fetchApiData(){       
+            
+    }    
 
     return (
         <div className="max-w-[1000px] mx-auto">
