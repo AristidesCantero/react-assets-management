@@ -1,7 +1,7 @@
 import React from "react";
 
 
-interface Business {
+export interface Business {
     id: number,
     name: string,
     tin: string,
@@ -10,7 +10,7 @@ interface Business {
     update_date: Date,
 };
 
-interface Location {
+export interface Location {
     id: Number,
     name: String,
     address: String,
@@ -24,4 +24,3 @@ interface Location {
     business: Business,
 };
 
-export {Business, Location};

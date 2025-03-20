@@ -1,11 +1,11 @@
 import React from "react";
 import { Component } from "react";
-import HomeHeader from "./HomeComponents/HomeHeader";
-import HomeFooter from "./HomeComponents/HomeFooter";
+import HomeHeader from "../components/HomeComponents/HomeHeader";
+import HomeFooter from "../components/HomeComponents/HomeFooter";
 
 import axios from "axios";
 import CrudTable from "@components/Tables/CrudTable";
-import { Business } from "./Interfaces/LocationInterfaces";
+import { Business } from "../models/Interfaces/LocationInterfaces";
 import { BusinessAdapter } from "../adapters/BusinessAdapter";
 import {getAllBusiness} from "../services/BusinessConsumer";
 import { useAsync, useFetchAndLoad } from "../hooks/index";

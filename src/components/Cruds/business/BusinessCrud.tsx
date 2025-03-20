@@ -3,7 +3,7 @@ import {Button, Modal} from 'react-bootstrap';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
-import { Business } from '../../Interfaces/LocationInterfaces';
+import { Business } from '../../../models/Interfaces/LocationInterfaces';
 
 
 

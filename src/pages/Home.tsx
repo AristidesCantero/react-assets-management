@@ -1,10 +1,10 @@
 import React from 'react';
 import {Component} from 'react';
-import HomeHeader from './HomeComponents/HomeHeader';
-import HomeLayout from './HomeComponents/HomeLayout';
-import HomeFooter from './HomeComponents/HomeFooter';
+import HomeHeader from '../components/HomeComponents/HomeHeader';
+import HomeLayout from '../components/HomeComponents/HomeLayout';
+import HomeFooter from '../components/HomeComponents/HomeFooter';
 
-import {Business} from './Interfaces/LocationInterfaces';
+import {Business} from '../models/Interfaces/LocationInterfaces';
 
 import { Link } from 'react-router-dom';
 

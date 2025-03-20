@@ -2,12 +2,12 @@ import React from "react";
 import Filter from "./columnFilters";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import es from "../../pages/lang/es";
+import es from "../../utilities/lang/es";
 
 import { BusinessAdapter } from "../../adapters/BusinessAdapter";
 import {getAllBusiness} from "../../services/BusinessConsumer";
 import { useAsync, useFetchAndLoad } from "../../hooks/index";
-import { Business } from "@pages/Interfaces/LocationInterfaces";
+import { Business } from "models/Interfaces/LocationInterfaces";
 
 
 import {Column, ColumnDef, Table, flexRender, ColumnFiltersState, VisibilityState,
@@ -93,7 +93,7 @@ const CrudTable: React.FC<CrudTableProps> = ({ API_URL, objectType,
 
     /* END TABLE CONSTANTS */
 
-    /* api consuming variables */
+    /* api consuming injections */
     const BusinessAdapterInstance = new BusinessAdapter();
     const {loading, callEndpoint} = useFetchAndLoad();
 
@@ -126,14 +126,6 @@ const CrudTable: React.FC<CrudTableProps> = ({ API_URL, objectType,
     }, [sorting, filtering, columnFiltering, columnVisibility, pagination, columns]);
 
 
-    // useEffect(() => {
-    //     // fetchApiData();
-    // }, [handleCrudContext]);
-
-    // useEffect(() => {
-    //     // fetchApiData();
-    // }, []);
-
     useEffect(() => {
         console.log(elements);
         const newColumns = Object.keys(elements[0] || {}).map((key) => ({
@@ -155,10 +147,10 @@ const CrudTable: React.FC<CrudTableProps> = ({ API_URL, objectType,
     }
 
     const adaptData = (data: any) => {
-        let adaptedData = data.map((item: any) => {
-            return BusinessAdapterInstance.adapt(item);
-        });
-        setElements(adaptedData);
+            let adaptedData = data.map((item: any) => {
+                return BusinessAdapterInstance.adapt(item);
+            });
+            setElements(adaptedData);
     }
 
     useAsync(getApiData, adaptData, () => {},[handleCrudContext]);
@@ -167,7 +159,7 @@ const CrudTable: React.FC<CrudTableProps> = ({ API_URL, objectType,
     }    
 
     return (
-        <div className="max-w-[1000px] mx-auto">
+        <div className="max-w-[1200px] mx-auto">
 
             <div className="relative flex flex-col w-full h-full text-slate-700 bg-white bg-opacity-100 shadow-md rounded-xl bg-clip-border">
 
@@ -250,7 +242,7 @@ const CrudTable: React.FC<CrudTableProps> = ({ API_URL, objectType,
                                     <tr key={row.id}>
                                         <td className="border-b border-slate-200">
                                             <div className="flex items-center">
-                                            <img src={"http://localhost:5173/src/pages/Resources/Images/iamgen-negocio.png"}
+                                            <img src={"http://localhost:5173/src/assets/iamgen-negocio.png"}
                                                     alt="John Michael" 
                                                     className="relative inline-block h-12 w-12 !rounded-full object-cover object-center" />
                                             </div>
@@ -311,20 +303,6 @@ const CrudTable: React.FC<CrudTableProps> = ({ API_URL, objectType,
                                 ))
                             }
                         </tbody>
-                        {/* <tfoot>
-                            {table.getFooterGroups().map((footerGroup) => (
-                                <tr key={footerGroup.id}>
-                                    {footerGroup.headers.map((footer) => (
-                                        <td key={footer.id}>
-                                            {flexRender(footer.column.columnDef.footer, footer.getContext())}
-                                        </td>
-                                    ))}
-                                    {setHandleUpdate && <td></td>}
-                                    {setHandleView && <td></td>}
-                                    {setHandleDelete && <td></td>}
-                                </tr>
-                            ))}
-                        </tfoot> */}
                     </table>
                 </div>
 
