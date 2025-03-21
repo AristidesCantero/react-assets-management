@@ -1,15 +1,17 @@
 import {Component} from 'react';
 
 import HomeHeader from '../components/HomeComponents/HomeHeader';
-import HomeLayout from '../components/HomeComponents/HomeLayout';
 import HomeFooter from '../components/HomeComponents/HomeFooter';
 
 import CrudTable from '../components/Tables/CrudTable';
 import BusinessCrud from '../components/Cruds/business/BusinessCrud';
-import Alerta from '../components/Alerts/Alert';
+import {getAllBusiness} from "../services/BusinessConsumer";
+import { Business } from 'models/Interfaces/LocationInterfaces';
+import {BusinessAdapter} from '../adapters/BusinessAdapter';
 
 
 const variantTypes = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'] as const;
+const modelAdapter = new BusinessAdapter();
 
 interface windowState{
     handleCrudContext: {handleCrud: 'create' | 'update' | 'delete' | 'view' | '', handleId?: number};
@@ -19,7 +21,7 @@ interface windowState{
     dataHaveBeenFetched: boolean;
 }
 
-class Business extends Component <{},windowState> {
+class BusinessWindow extends Component <{},windowState> {
     constructor(props){
         super(props);
         this.state = {
@@ -29,6 +31,7 @@ class Business extends Component <{},windowState> {
             dataHaveBeenFetched: false
         }
     }
+    
 
     componentDidMount(): void {
         this.setState({
@@ -45,7 +48,7 @@ class Business extends Component <{},windowState> {
     hideAlertContext = () => { this.setState({alertContext: {variant:"primary",message:"", heading:""}}); }
 
 
-    // CRUD operations
+    // CRUD operations and data
     setCrudDialogInvisible = () => {
          this.setState({dialogVisible: false, handleCrudContext: {handleCrud:'', handleId:undefined}}); 
         }
@@ -70,8 +73,15 @@ class Business extends Component <{},windowState> {
         this.setCrudDialogInvisible();
         this.sendAndShowAlertMessage(variant, message, heading);
     }
+    setHandle = {
+        Create: this.setHandleCreate, 
+        Update: this.setHandleUpdate, 
+        Delete: this.setHandleDelete, 
+        View: this.setHandleView
+    }
     
 
+    //render
 
     render(){
         return(
@@ -81,10 +91,12 @@ class Business extends Component <{},windowState> {
                     <div className="layout_content">
                         <h1>Business {this.state.handleCrudContext.handleCrud}</h1>
                         <CrudTable  
+                            modelAdapter = {modelAdapter}
+                            apiCall={getAllBusiness}
                             handleCrudContext={this.state.handleCrudContext}
                             dialogVisible={this.state.dialogVisible}
-                            API_URL="http://127.0.0.1:8000/locations/business" 
                             objectType={{} as Business} 
+                            setHandle={this.setHandle}   
                             setHandleCreate={this.setHandleCreate} 
                             setHandleDelete={this.setHandleDelete} 
                             setHandleUpdate={this.setHandleUpdate}
@@ -109,7 +121,7 @@ class Business extends Component <{},windowState> {
 
 }
 
-export default Business;
+export default BusinessWindow;
 
 
 // API_URL={'http://127.0.0.1:8000/locations/business/'+ this.state.handleCrudContext.handleId}

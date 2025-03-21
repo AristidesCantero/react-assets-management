@@ -4,23 +4,29 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import es from "../../utilities/lang/es";
 
-import { BusinessAdapter } from "../../adapters/BusinessAdapter";
-import {getAllBusiness} from "../../services/BusinessConsumer";
+import adaptersInterface from "../../adapters/adaptersInterface";
+import { AxiosResponse } from "axios";
 import { useAsync, useFetchAndLoad } from "../../hooks/index";
-import { Business } from "models/Interfaces/LocationInterfaces";
 
 
 import {Column, ColumnDef, Table, flexRender, ColumnFiltersState, VisibilityState,
-        useReactTable, PaginationState, 
-        getCoreRowModel, getPaginationRowModel,
+        useReactTable, PaginationState, getCoreRowModel, getPaginationRowModel,
         getSortedRowModel, getFilteredRowModel } from "@tanstack/react-table";
 
+
 interface CrudTableProps {
-    API_URL: string;
+    modelAdapter: adaptersInterface;
+    apiCall: () => {call: Promise<AxiosResponse<any>>, controller: AbortController};
     handleCrudContext: {handleCrud: 'create' | 'update' | 'delete' | 'view' | '', handleId?: number};
     dialogVisible: boolean;
     objectType?: {};
     searchableColumns?: string[];
+    setHandle: {
+        Create: (value: boolean, id: number) => void;
+        Update?: (value: boolean, id: number) => void;
+        Delete: (value: boolean, id: number) => void;
+        View?: (value: boolean, id: number) => void;
+    }
     setHandleCreate: (value: boolean, id: number) => void;
     setHandleUpdate?: (value: boolean, id: number) => void;
     setHandleDelete?: (value: boolean, id: number) => void;
@@ -34,10 +40,11 @@ interface CrudTableState {
 }
 
 
-const CrudTable: React.FC<CrudTableProps> = ({ API_URL, objectType, 
+const CrudTable: React.FC<CrudTableProps> = ({ modelAdapter, apiCall, objectType, setHandle,
     setHandleCreate, setHandleDelete, setHandleUpdate, setHandleView , 
     searchableColumns, discardedColumns, handleCrudContext, dialogVisible}) => {
         
+
     const [elements, setElements] = useState<any[]>([]);
 
     /* TABLE CONSTANTS  */
@@ -94,10 +101,12 @@ const CrudTable: React.FC<CrudTableProps> = ({ API_URL, objectType,
     /* END TABLE CONSTANTS */
 
     /* api consuming injections */
-    const BusinessAdapterInstance = new BusinessAdapter();
+    const BusinessAdapterInstance = modelAdapter;
     const {loading, callEndpoint} = useFetchAndLoad();
-
     /* END api consuming variables */
+
+    const {Create, Update, Delete, View } = setHandle;
+
 
     useEffect(() => {
         let start = Math.max(0, currentPaginationPage - Math.floor(paginationGroupLimit / 2));
@@ -143,20 +152,15 @@ const CrudTable: React.FC<CrudTableProps> = ({ API_URL, objectType,
 
 
     const getApiData = async () => {
-        return await callEndpoint(getAllBusiness());
+        return await callEndpoint(apiCall());
     }
 
     const adaptData = (data: any) => {
-            let adaptedData = data.map((item: any) => {
-                return BusinessAdapterInstance.adapt(item);
-            });
+            let adaptedData = data.map((item: any) => { return BusinessAdapterInstance.adapt(item); });
             setElements(adaptedData);
     }
 
-    useAsync(getApiData, adaptData, () => {},[handleCrudContext]);
-    function fetchApiData(){       
-            
-    }    
+    useAsync(getApiData, adaptData, () => {},[handleCrudContext]);  
 
     return (
         <div className="max-w-[1200px] mx-auto">
@@ -180,7 +184,7 @@ const CrudTable: React.FC<CrudTableProps> = ({ API_URL, objectType,
                     
                         <button
                                 className="flex select-none items-center gap-2 rounded bg-slate-800 py-2.5 px-4 text-xs font-semibold text-white shadow-md shadow-slate-900/10 transition-all hover:shadow-lg hover:shadow-slate-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                                type="button" onClick={() => {setHandleCreate(true,-1) }} disabled={setHandleCreate === undefined}>
+                                type="button" onClick={() => {Create(true,-1) }} disabled={Create === undefined}>
                                 <svg className="w-6 h-6 text-blue-300 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
                                         d="M15 5v14m-8-7h2m0 0h2m-2 0v2m0-2v-2m12 1h-6m6 4h-6M4 19h16c.5523 0 1-.4477 1-1V6c0-.55228-.4477-1-1-1H4c-.55228 0-1 .44772-1 1v12c0 .5523.44772 1 1 1Z"/>
@@ -259,26 +263,26 @@ const CrudTable: React.FC<CrudTableProps> = ({ API_URL, objectType,
                                             </td>
                                         ))}
                                         
-                                        {setHandleUpdate && (
+                                        {Update && (
                                             <td className="border-b border-slate-200">
                                                 <div className="text-sm font-medium leading-5 text-center whitespace-no-wrap border-gray-200 ">
                                                 <a href="#" className="show-icon">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" 
                                                         className="text-green-400 hover:text-green-800" viewBox="0 0 16 16"
-                                                        onClick={() => { setHandleUpdate(true,row.original.id); }}>
+                                                        onClick={() => { Update(true,row.original.id); }}>
                                                         <path d="M15.825.12a.5.5 0 0 1 .132.584c-1.53 3.43-4.743 8.17-7.095 10.64a6.1 6.1 0 0 1-2.373 1.534c-.018.227-.06.538-.16.868-.201.659-.667 1.479-1.708 1.74a8.1 8.1 0 0 1-3.078.132 4 4 0 0 1-.562-.135 1.4 1.4 0 0 1-.466-.247.7.7 0 0 1-.204-.288.62.62 0 0 1 .004-.443c.095-.245.316-.38.461-.452.394-.197.625-.453.867-.826.095-.144.184-.297.287-.472l.117-.198c.151-.255.326-.54.546-.848.528-.739 1.201-.925 1.746-.896q.19.012.348.048c.062-.172.142-.38.238-.608.261-.619.658-1.419 1.187-2.069 2.176-2.67 6.18-6.206 9.117-8.104a.5.5 0 0 1 .596.04"/>
                                                     </svg>
                                                 </a>
                                             </div>
                                             </td>
                                         )}
-                                        {setHandleView && (
+                                        {View && (
                                             <td className="border-b border-slate-200"> 
                                             <div className="text-sm font-medium leading-5 text-center whitespace-no-wrap border-gray-200 ">
                                                 <a href="#" className="show-icon">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" 
                                                         className="text-blue-400 hover:text-blue-800" viewBox="0 0 16 16"
-                                                        onClick={() => { setHandleView(true,row.original.id); }}>
+                                                        onClick={() => {View(true,row.original.id); }}>
                                                     <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
                                                     <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
                                                 </svg>
@@ -286,13 +290,13 @@ const CrudTable: React.FC<CrudTableProps> = ({ API_URL, objectType,
                                             </div>
                                             </td>
                                         )}
-                                        {setHandleDelete && (
+                                        {Delete && (
                                             <td className="border-b border-slate-200">
                                                 <div className="text-sm font-medium leading-5 text-center whitespace-no-wrap border-gray-200 ">
                                                 <a href="#" className="show-icon">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" 
                                                         className="text-gray-600 hover:text-red-600" viewBox="0 0 16 16"
-                                                        onClick={() => { setHandleDelete(true,row.original.id); }}>
+                                                        onClick={() => { Delete(true,row.original.id); }}>
                                                         <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
                                                 </svg>
                                                 </a>

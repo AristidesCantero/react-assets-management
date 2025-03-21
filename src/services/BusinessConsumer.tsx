@@ -1,5 +1,5 @@
 import React from "react";
-import Business from "@pages/Business";
+import Business from "@pages/BusinessWindow";
 import { BusinessAdapter } from "adapters/BusinessAdapter";
 import { loadAbort } from "../utilities/LoadAbortAxios.utilities";
 import axios from "axios";

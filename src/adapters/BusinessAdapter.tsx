@@ -1,6 +1,7 @@
 import React from "react";
 import { R } from "react-router/dist/development/route-data-BmvbmBej";
 import { number } from "yup";
+import adaptersInterface from "./adaptersInterface";
 
 
 
@@ -13,25 +14,26 @@ interface RawBusinessData {
     update_date: Date;
 }
 
-export class BusinessAdapter {
+export class BusinessAdapter implements adaptersInterface{
 
-    private dataTypes = {
-        id: typeof Number,
-        name: typeof String,
-        TIN: typeof String,
-        UTR: typeof String,
-        creation_date: typeof Date,
-        update_date: typeof Date,
-    }
+        dataTypes = {
+            id: typeof Number,
+            name: typeof String,
+            TIN: typeof String,
+            UTR: typeof String,
+            creation_date: typeof Date,
+            update_date: typeof Date,
+        }
+    
 
-    private setted: boolean = false;
-    private value: RawBusinessData = {} as RawBusinessData;
+    setted = false
+    value: RawBusinessData = {} as RawBusinessData;
 
     get FormattedCreationDate(){
         return new Date( this.value.creation_date).toDateString();
     }
 
-    public adapt(data: RawBusinessData) {
+    adapt(data: RawBusinessData) {
         this.value = data;
         
         return {
