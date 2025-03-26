@@ -28,6 +28,25 @@ export function Layout({children,}:{children: React.ReactNode}){
   )
 }
 
-export default function Root(){
+export default function App(){
     return <Outlet/>
+}
+
+export function ErrorBoundary({error}: {error: any}){
+    let message = 'oops'
+    let details = 'something went wrong'
+    let stack: string | undefined;
+
+    if (error.status === 404){
+        message = '404 Not Found'
+        details = 'The requested page could not be found'
+    }
+
+    return(
+        <div>
+            <h1>{message}</h1>
+            <p>{details}</p>
+            {stack && <pre>{stack}</pre>}
+        </div>
+    )
 }

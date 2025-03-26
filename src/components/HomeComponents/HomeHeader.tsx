@@ -1,7 +1,7 @@
 import { Component } from "react";
 import React from "react";
 
-import Alerta from '../Alerts/Alert';
+import Alerta from '../Alerts/Alert.js';
 
 
 import { Link } from "react-router-dom";
@@ -67,7 +67,7 @@ class HomeHeader extends Component <homeHeaderProps, homeHeaderState> {
                     </div>
 
                     <ul className="menu_bar">
-                         <li><Link to={"/Home"}>Inicio</Link></li>
+                         <li><Link to={"/"}>Inicio</Link></li>
                         <li><Link to={"/Business"}>Listados</Link></li>
                         <li><Link to={"/Tests"}>Testeos</Link></li>
                         <li><Link to={"/Register"}>Registrarse</Link></li>

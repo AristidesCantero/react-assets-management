@@ -19,10 +19,12 @@ class App extends Component{
   render() {
     return (
       <>   
-      <Routes>
+      {/* <Routes>
         <Route index element={<Home/>}/>
         <Route path='/Home' element={<Home/>}/>
-      </Routes>
+        <Route path='/Business' element={<BusinessWindow/>}/>
+
+      </Routes> */}
        {/* <BrowserRouter>
          
           <Routes>
@@ -38,24 +40,6 @@ class App extends Component{
      )
   }
 
-}
-export function ErrorBoundary({ error }: { error: any }) {
-  let message = 'oops'
-  let details = 'something went wrong'
-  let stack : string | undefined;
-
-  if (isRouteErrorResponse(error)){
-    message = error.status === 404 ? '404 Not Found' : 'Oops'
-    details = error.status === 404 ? 'The requested page could not be found' : 'Something went wrong'
-  }
-
-  return(
-    <div>
-      <h1>{message}</h1>
-      <p>{details}</p>
-      {stack && <pre>{stack}</pre>}
-    </div>
-  ) 
 }
 
 export default App
