@@ -10,6 +10,16 @@ export interface Business {
     update_date: Date,
 };
 
+export interface Headquarters {
+    id: number,
+    address: string,
+    name: string,
+    phone: number,
+    creation_date: Date,
+    update_date: Date,
+    business_key: number
+}
+
 export interface Location {
     id: Number,
     name: String,

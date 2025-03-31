@@ -19,22 +19,6 @@ class App extends Component{
   render() {
     return (
       <>   
-      {/* <Routes>
-        <Route index element={<Home/>}/>
-        <Route path='/Home' element={<Home/>}/>
-        <Route path='/Business' element={<BusinessWindow/>}/>
-
-      </Routes> */}
-       {/* <BrowserRouter>
-         
-          <Routes>
-            <Route index element={<Home/>} />
-            <Route path="/Home" element={<Home/>} />
-            <Route path="/Business" element={<BusinessWindow/>} />
-            <Route path="/Tests" element={<Tests/>}/>
-            <Route path="*" element={<Home/>}/>
-          </Routes>
-        </BrowserRouter> */}
       </>
        
      )

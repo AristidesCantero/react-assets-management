@@ -5,4 +5,5 @@ export default [
   route("*?", "./pages/Home.tsx"),
   route("Business", "./pages/BusinessWindow.tsx"),
   route("Tests", "./pages/Tests.tsx"),
+  route("Headquarters/:headquarterId", "./pages/HeadquartersWindow.tsx"),
 ] satisfies RouteConfig;

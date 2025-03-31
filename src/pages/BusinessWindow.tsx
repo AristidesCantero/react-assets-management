@@ -1,25 +1,22 @@
 import {Component} from 'react';
 
-import HomeHeader from '../components/HomeComponents/HomeHeader';
-import HomeFooter from '../components/HomeComponents/HomeFooter';
+import HomeHeader from '../components/HomeComponents/HomeHeader.js';
+import HomeFooter from '../components/HomeComponents/HomeFooter.js';
+import CrudTable from '../components/Tables/CrudTable.js';
+import BusinessCrud from '../components/Cruds/business/BusinessCrud.js';
+import {getAllBusiness} from "../services/BusinessConsumer.js";
+import { Business } from 'models/Interfaces/LocationInterfaces.js';
+import {BusinessAdapter} from '../adapters/BusinessAdapter.js';
 
-import CrudTable from '../components/Tables/CrudTable';
-import BusinessCrud from '../components/Cruds/business/BusinessCrud';
-import {getAllBusiness} from "../services/BusinessConsumer";
-import { Business } from 'models/Interfaces/LocationInterfaces';
-import {BusinessAdapter} from '../adapters/BusinessAdapter';
+import '../models/Interfaces/DetailedListsStates.js';
+import { variantAlertTypes, windowState } from '../models/Interfaces/DetailedListsStates.js';
 
 
-const variantTypes = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'] as const;
+
+
+const variantTypes = variantAlertTypes;
 const modelAdapter = new BusinessAdapter();
 
-interface windowState{
-    handleCrudContext: {handleCrud: 'create' | 'update' | 'delete' | 'view' | '', handleId?: number};
-    dialogVisible: boolean;
-    alertContext: {variant: typeof variantTypes[number], 
-        message: string, heading: string};
-    dataHaveBeenFetched: boolean;
-}
 
 class BusinessWindow extends Component <{},windowState> {
     constructor(props){
@@ -31,7 +28,6 @@ class BusinessWindow extends Component <{},windowState> {
             dataHaveBeenFetched: false
         }
     }
-    
 
     componentDidMount(): void {
         this.setState({
@@ -101,7 +97,8 @@ class BusinessWindow extends Component <{},windowState> {
                             setHandleDelete={this.setHandleDelete} 
                             setHandleUpdate={this.setHandleUpdate}
                             setHandleView={this.setHandleView}
-                            discardedColumns={['id', 'creation_date', 'update_date']}/>
+                            discardedColumns={['id', 'creation_date', 'update_date']}
+                            redirect='Headquarters'/>
                         <BusinessCrud
                             apiInfo={ {url: 'http://127.0.0.1:8000/',  base: ['locations','business'], 
                                 id:this.state.handleCrudContext.handleId}}

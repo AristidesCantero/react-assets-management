@@ -7,6 +7,7 @@
       "@pages/*": ["pages/*"],
       "@/*": ["./src/*"], 
     },
+    "rootDirs": [".", "./.react-router/types"],
     /* Visit https://aka.ms/tsconfig to read more about this file */
 
     /* Projects */
@@ -122,10 +123,12 @@
     "allowJs": false,
     "jsx": "react-jsx",
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "./",
     "allowSyntheticDefaultImports": true,
   },
-  "include": ["src"],
+  "include": ["src", 
+              ".react-router/types/**/*"
+            ],
   "exclude": [
     "./node_modules/**/*",
     // "tailwind.config.tsx"

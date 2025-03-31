@@ -7,7 +7,7 @@ import { Business } from '../../../models/Interfaces/LocationInterfaces.js';
 
 
 
-interface propsBusinessCreate {
+interface propsHeadquartersCreate {
     isOpen: boolean;
     onHide: () => void;
     apiInfo: { url: string,  base: [string, ...string[]],  id?: number};
@@ -15,12 +15,12 @@ interface propsBusinessCreate {
     sendAndShowAlertMessage: (variant: typeof variantTypes[number], message: string, heading: string) => void;
 }
 
-const crudToMethod: { [key in propsBusinessCreate['crudType']]: 'post' | 'put' | 'delete' | 'get' } = {
+const crudToMethod: { [key in propsHeadquartersCreate['crudType']]: 'post' | 'put' | 'delete' | 'get' } = {
     'create': 'post', 'update': 'put', 'delete': 'delete', 'view': 'get', 
 }
 const variantTypes = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'] as const;
 const defaultBusiness = { id: 0, name: '', tin: '', utr: '', creation_date: new Date(), update_date: new Date() };
-const crudTranslations: { [key in propsBusinessCreate['crudType']]: [string, typeof variantTypes[number], string] } = {
+const crudTranslations: { [key in propsHeadquartersCreate['crudType']]: [string, typeof variantTypes[number], string] } = {
     'create': ['creada', variantTypes[2], 'Creación'],
     'update': ['actualizada', variantTypes[1], 'Actualización'],
     'delete': ['eliminada', variantTypes[4], 'Eliminación'],
@@ -33,7 +33,7 @@ const validationSchema = Yup.object({
     utr: Yup.string().min(2, "UTR must be at least 2 characters").matches(/[A-Za-z0-9Ññ.\-]$/, "No se permiten caracteres especiales").required("UTR is required")
 });
 
-let BusinessCrud: React.FC<propsBusinessCreate> = ({ isOpen, onHide, apiInfo, crudType, sendAndShowAlertMessage }) => {
+let BusinessCrud: React.FC<propsHeadquartersCreate> = ({ isOpen, onHide, apiInfo, crudType, sendAndShowAlertMessage }) => {
 
     //define states for form data
     let [apiUrl, setApiUrl] = React.useState<string>('');

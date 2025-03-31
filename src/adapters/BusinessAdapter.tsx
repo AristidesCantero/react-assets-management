@@ -1,7 +1,4 @@
-import React from "react";
-import { R } from "react-router/dist/development/route-data-BmvbmBej";
-import { number } from "yup";
-import adaptersInterface from "./adaptersInterface";
+import adaptersInterface from "./adaptersInterface.js";
 
 
 

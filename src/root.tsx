@@ -2,6 +2,8 @@ import {Links, Meta, Outlet, Scripts, ScrollRestoration} from 'react-router'
 import 'index.css'
 
 
+
+
 export function Layout({children,}:{children: React.ReactNode}){
   return(
     <html lang="en">
@@ -28,8 +30,10 @@ export function Layout({children,}:{children: React.ReactNode}){
   )
 }
 
-export default function App(){
+
+export default function Root(){
     return <Outlet/>
+    
 }
 
 export function ErrorBoundary({error}: {error: any}){

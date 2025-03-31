@@ -1,12 +1,13 @@
 import React from "react";
-import Filter from "./columnFilters";
+import Filter from "./columnFilters.js";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import es from "../../utilities/lang/es";
+import { Link } from "react-router";
+import es from "../../utilities/lang/es.js";
 
-import adaptersInterface from "../../adapters/adaptersInterface";
+import adaptersInterface from "../../adapters/adaptersInterface.js";
 import { AxiosResponse } from "axios";
-import { useAsync, useFetchAndLoad } from "../../hooks/index";
+import { useAsync, useFetchAndLoad } from "../../hooks/index.js";
 
 
 import {Column, ColumnDef, Table, flexRender, ColumnFiltersState, VisibilityState,
@@ -32,6 +33,7 @@ interface CrudTableProps {
     setHandleDelete?: (value: boolean, id: number) => void;
     setHandleView?: (value: boolean, id: number) => void;
     discardedColumns?: string[];
+    redirect?: string;
 }
 
 interface CrudTableState {
@@ -42,7 +44,7 @@ interface CrudTableState {
 
 const CrudTable: React.FC<CrudTableProps> = ({ modelAdapter, apiCall, objectType, setHandle,
     setHandleCreate, setHandleDelete, setHandleUpdate, setHandleView , 
-    searchableColumns, discardedColumns, handleCrudContext, dialogVisible}) => {
+    searchableColumns, discardedColumns, handleCrudContext, dialogVisible, redirect}) => {
         
 
     const [elements, setElements] = useState<any[]>([]);
@@ -236,6 +238,7 @@ const CrudTable: React.FC<CrudTableProps> = ({ modelAdapter, apiCall, objectType
                                     {setHandleUpdate && <th className="p-4 transition-colors border-y border-slate-200 bg-slate-50"></th>}
                                     {setHandleView && <th className="p-4 transition-colors border-y border-slate-200 bg-slate-50 "></th>}
                                     {setHandleDelete && <th className="p-4 transition-colors border-y border-slate-200 bg-slate-50 "></th>}
+                                    {redirect && <th className="p-4 transition-colors border-y border-slate-200 bg-slate-50 "></th>}
                                 </tr>)
                             }
                         </thead>
@@ -303,6 +306,12 @@ const CrudTable: React.FC<CrudTableProps> = ({ modelAdapter, apiCall, objectType
                                             </div>
                                             </td>
                                         )}
+                                        {redirect && 
+                                            <td className="border-b border-slate-200">
+                                                <li className="block font-sans text-sm antialiased font-medium leading-normal text-blue-gray-900">
+                                                    <Link to={'/'+redirect+"/"+row.original.id}>Sedes</Link>
+                                                </li>
+                                            </td>}
                                     </tr>
                                 ))
                             }
