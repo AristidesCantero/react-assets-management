@@ -1,7 +1,7 @@
 import React from "react";
-import Business from "@pages/BusinessWindow";
-import { BusinessAdapter } from "adapters/BusinessAdapter";
-import { loadAbort } from "../utilities/LoadAbortAxios.utilities";
+import Business from "@pages/TableWindows/BusinessWindow.js";
+import { BusinessAdapter } from "adapters/BusinessAdapter.js";
+import { loadAbort } from "../utilities/LoadAbortAxios.utilities.js";
 import axios from "axios";
 
 const apiBase = "http://localhost:8000/";

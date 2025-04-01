@@ -25,13 +25,9 @@ interface CrudTableProps {
     setHandle: {
         Create: (value: boolean, id: number) => void;
         Update?: (value: boolean, id: number) => void;
-        Delete: (value: boolean, id: number) => void;
+        Delete?: (value: boolean, id: number) => void;
         View?: (value: boolean, id: number) => void;
     }
-    setHandleCreate: (value: boolean, id: number) => void;
-    setHandleUpdate?: (value: boolean, id: number) => void;
-    setHandleDelete?: (value: boolean, id: number) => void;
-    setHandleView?: (value: boolean, id: number) => void;
     discardedColumns?: string[];
     redirect?: string;
 }
@@ -42,8 +38,7 @@ interface CrudTableState {
 }
 
 
-const CrudTable: React.FC<CrudTableProps> = ({ modelAdapter, apiCall, objectType, setHandle,
-    setHandleCreate, setHandleDelete, setHandleUpdate, setHandleView , 
+const CrudTable: React.FC<CrudTableProps> = ({ modelAdapter, apiCall, objectType, setHandle, 
     searchableColumns, discardedColumns, handleCrudContext, dialogVisible, redirect}) => {
         
 
@@ -235,9 +230,9 @@ const CrudTable: React.FC<CrudTableProps> = ({ modelAdapter, apiCall, objectType
                                             }
                                         </th>)
                                     }
-                                    {setHandleUpdate && <th className="p-4 transition-colors border-y border-slate-200 bg-slate-50"></th>}
-                                    {setHandleView && <th className="p-4 transition-colors border-y border-slate-200 bg-slate-50 "></th>}
-                                    {setHandleDelete && <th className="p-4 transition-colors border-y border-slate-200 bg-slate-50 "></th>}
+                                    {Update && <th className="p-4 transition-colors border-y border-slate-200 bg-slate-50"></th>}
+                                    {View && <th className="p-4 transition-colors border-y border-slate-200 bg-slate-50 "></th>}
+                                    {Delete && <th className="p-4 transition-colors border-y border-slate-200 bg-slate-50 "></th>}
                                     {redirect && <th className="p-4 transition-colors border-y border-slate-200 bg-slate-50 "></th>}
                                 </tr>)
                             }

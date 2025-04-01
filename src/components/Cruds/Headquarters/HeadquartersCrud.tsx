@@ -3,7 +3,7 @@ import {Button, Modal} from 'react-bootstrap';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
-import { Business } from '../../../models/Interfaces/LocationInterfaces.js';
+import { Headquarters } from '../../../models/Interfaces/LocationInterfaces.js';
 
 
 
@@ -19,7 +19,7 @@ const crudToMethod: { [key in propsHeadquartersCreate['crudType']]: 'post' | 'pu
     'create': 'post', 'update': 'put', 'delete': 'delete', 'view': 'get', 
 }
 const variantTypes = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'] as const;
-const defaultBusiness = { id: 0, name: '', tin: '', utr: '', creation_date: new Date(), update_date: new Date() };
+const defaultHeadquarters = { id:0, address:'', name: '', phone: 0, creation_date: new Date(), update_date: new Date(), business_key: 0 };
 const crudTranslations: { [key in propsHeadquartersCreate['crudType']]: [string, typeof variantTypes[number], string] } = {
     'create': ['creada', variantTypes[2], 'Creación'],
     'update': ['actualizada', variantTypes[1], 'Actualización'],
@@ -28,23 +28,23 @@ const crudTranslations: { [key in propsHeadquartersCreate['crudType']]: [string,
 };
 
 const validationSchema = Yup.object({
-    name: Yup.string().min(2, "Name must be at least 2 characters").matches(/[A-Za-z0-9ñÑ.\-]$/, "No se permiten caracteres especiales").required("Name is required"),
-    tin: Yup.string().min(2, "TIN must be at least 2 characters").matches(/[A-Za-z0-9ñÑ.\-]$/, "No se permiten caracteres especiales").required("TIN is required"),
-    utr: Yup.string().min(2, "UTR must be at least 2 characters").matches(/[A-Za-z0-9Ññ.\-]$/, "No se permiten caracteres especiales").required("UTR is required")
+    address: Yup.string().min(2, "Address must be at least 2 characters").matches(/[A-Za-z0-9ñÑ#.\-]$/, "No se permiten caracteres especiales").required("Address is required"),
+    name: Yup.string().min(2, "name must be at least 2 characters").matches(/[A-Za-z0-9ñÑ.\-]$/, "No se permiten caracteres especiales").required("Name is required"),
+    phone: Yup.number().truncate().positive("Phone must be a positive number").integer("Phone must be an integer").min(10,"Number must have 10 digits").max(10,"Number must have 10 digits").required("Phone is required"),
 });
 
-let BusinessCrud: React.FC<propsHeadquartersCreate> = ({ isOpen, onHide, apiInfo, crudType, sendAndShowAlertMessage }) => {
+let HeadquartersCrud: React.FC<propsHeadquartersCreate> = ({ isOpen, onHide, apiInfo, crudType, sendAndShowAlertMessage }) => {
 
     //define states for form data
     let [apiUrl, setApiUrl] = React.useState<string>('');
-    let [formData, setFormData] = React.useState<Business>({ id: 0, name: '', tin: '', utr: '', creation_date: new Date(), update_date: new Date() });
-    let [defaultData, setDefaultData] = React.useState<Business>({ id: 0, name: '', tin: '', utr: '', creation_date: new Date(), update_date: new Date() });
+    let [formData, setFormData] = React.useState<Headquarters>({ id:0, address:'', name: '', phone: 0, creation_date: new Date(), update_date: new Date(), business_key: 0 });
+    let [defaultData, setDefaultData] = React.useState<Headquarters>({ id:0, address:'', name: '', phone: 0, creation_date: new Date(), update_date: new Date(), business_key: 0 });
     let [hasData, setHasData] = React.useState<boolean>(false);
     let [disabled, setDisabled] = React.useState<boolean>(false);
     let [isSubmitable, setIsSubmitable] = React.useState<boolean>(false);
 
     const formik = useFormik({
-        initialValues: { name: "", tin: "", utr: "" },
+        initialValues: { id:0, address:'', name: '', phone: 0, creation_date: new Date(), update_date: new Date(), business_key: 0 },
         validationSchema: validationSchema,
         onSubmit: values => {
             // console.log(values.name+' '+values.tin+" "+values.utr+' \n'+apiUrl+' \n'+crudToMethod[crudType]);
@@ -77,8 +77,8 @@ let BusinessCrud: React.FC<propsHeadquartersCreate> = ({ isOpen, onHide, apiInfo
     function getBusinessData() {
         if (crudType === 'create') 
             { 
-                setFormData(defaultBusiness);
-                setDefaultData(defaultBusiness);
+                setFormData(defaultHeadquarters);
+                setDefaultData(defaultHeadquarters);
                 return; 
             }
         
@@ -86,11 +86,15 @@ let BusinessCrud: React.FC<propsHeadquartersCreate> = ({ isOpen, onHide, apiInfo
         .then(response => response.data)
         .then((data) => {
             formik.setValues({ 
+            id: data.id || 0,
+            address: data.name || '',
             name: data.name || '',
-            tin: data.tin || '',
-            utr: data.utr || '' });
-            setFormData(data as Business);
-            setDefaultData(data as Business);
+            phone: data.phone || 0,
+            creation_date: data.creation_date || new Date(),
+            update_date: data.update_date || new Date(),
+            business_key: data.business_key || 0,});
+            setFormData(data as Headquarters);
+            setDefaultData(data as Headquarters);
         })
         .then(() => {setHasData(true); })
         .catch((error) => {
@@ -102,8 +106,8 @@ let BusinessCrud: React.FC<propsHeadquartersCreate> = ({ isOpen, onHide, apiInfo
 
     function onHideSelf(variant: typeof variantTypes[number], message: string, heading: string) {
         setApiUrl('');
-        setFormData({ id: 0, name: '', tin: '', utr: '', creation_date: new Date(), update_date: new Date() });
-        setDefaultData({ id: 0, name: '', tin: '', utr: '', creation_date: new Date(), update_date: new Date() });
+        setFormData({ id:0, address:'', name: '', phone: 0, creation_date: new Date(), update_date: new Date(), business_key: 0 });
+        setDefaultData({ id:0, address:'', name: '', phone: 0, creation_date: new Date(), update_date: new Date(), business_key: 0 });
         setHasData(false);
         onHide();
         sendAndShowAlertMessage(variant, message, heading);
@@ -177,36 +181,36 @@ let BusinessCrud: React.FC<propsHeadquartersCreate> = ({ isOpen, onHide, apiInfo
 
                         <form onSubmit={formik.handleSubmit} className="grid grid-cols-2 gap-4">
                             <div className='grid grid-cols-1 gap-1'>
-                                <label htmlFor="name" className="block font-serif text-gray-700 text-xl">Nombre</label>
+                                <label htmlFor="name" className="block font-serif text-gray-700 text-xl">Dirección</label>
                                 <input className='bg-gray-100 w-10/12 h-10 rounded-sm border-2 border-black focus:bg-gray-300' 
-                                        id="name" 
+                                        id="address" 
                                         type="text" 
-                                        placeholder={defaultData.name} 
-                                        onChange={formik.handleChange} value={formik.values.name}
+                                        placeholder={defaultData.address} 
+                                        onChange={formik.handleChange} value={formik.values.address}
                                         disabled={disabled}
                                         />
-                                {formik.errors.name && ( <div className="text-red-500 text-sm mt-1">{formik.errors.name}</div> )}
+                                {formik.errors.address && ( <div className="text-red-500 text-sm mt-1">{formik.errors.address}</div> )}
                             </div>
                             <div className='grid grid-cols-1 gap-1'>
-                            <label htmlFor="tin" className="block font-serif text-gray-700 text-xl">TIN</label>
+                            <label htmlFor="name" className="block font-serif text-gray-700 text-xl">TIN</label>
                                 <input className='bg-gray-200 w-10/12 h-10 rounded-sm border-2 border-black focus:bg-gray-400'
-                                        id="tin" 
+                                        id="name" 
                                         type="text" 
-                                        placeholder={defaultData.tin}
-                                        onChange={formik.handleChange} value={formik.values.tin} disabled={disabled}
+                                        placeholder={defaultData.name}
+                                        onChange={formik.handleChange} value={formik.values.name} disabled={disabled}
                                 />
-                                {formik.errors.tin && ( <div className="text-red-500 text-sm mt-1">{formik.errors.tin}</div> )}
+                                {formik.errors.name && ( <div className="text-red-500 text-sm mt-1">{formik.errors.name}</div> )}
                             </div>
 
                             <div className='grid grid-cols-1 gap-1'>
-                            <label htmlFor="utr" className="block font-serif text-gray-700 text-xl">UTR</label>
+                            <label htmlFor="phone" className="block font-serif text-gray-700 text-xl">UTR</label>
                                 <input className='bg-gray-200 w-10/12 h-10 rounded-sm border-2 border-black focus:bg-gray-400'
-                                        id="utr" 
+                                        id="phone" 
                                         type="text" 
-                                        placeholder={defaultData.utr}
-                                        onChange={formik.handleChange} value={formik.values.utr} disabled={disabled}
+                                        placeholder={defaultData.phone.toFixed.toString()}
+                                        onChange={formik.handleChange} value={formik.values.phone} disabled={disabled}
                                 />
-                                {formik.errors.utr && ( <div className="text-red-500 text-sm mt-1">{formik.errors.utr}</div> )}
+                                {formik.errors.phone && ( <div className="text-red-500 text-sm mt-1">{formik.errors.phone}</div> )}
                             </div>
                             
                             <div className="col-span-2 flex mt-4 justify-center">
@@ -224,4 +228,4 @@ let BusinessCrud: React.FC<propsHeadquartersCreate> = ({ isOpen, onHide, apiInfo
             )
 }
 
-export default BusinessCrud; 
+export default HeadquartersCrud; 

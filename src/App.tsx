@@ -2,7 +2,7 @@ import { Component, useState } from 'react'
 import './App.css'
 import { BrowserRouter, isRouteErrorResponse, Route, Routes } from 'react-router';
 import Home from './pages/Home.js';
-import BusinessWindow from './pages/BusinessWindow.js';
+import BusinessWindow from './pages/TableWindows/BusinessWindow.js';
 import Tests from './pages/Tests.js';
 
 import { Outlet } from 'react-router';
