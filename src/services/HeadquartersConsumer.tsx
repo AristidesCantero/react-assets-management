@@ -6,16 +6,17 @@ import axios from "axios";
 
 
 const apiBase = "http://localhost:8000/";
-const businessApi = "locations/headquarters";
+const headquartersApi = "locations/headquarters";
+
 
 export const getAllHeadquarters = () => {
     const controller = loadAbort();
-    const url = new URL(apiBase + businessApi);
+    const url = new URL(apiBase + headquartersApi);
     return {call: axios.get(url.toString(), { signal: controller.signal }), controller };
 }
 
 export const getBusinessHeadquarters = (id: number) => {
     const controller = loadAbort();
-    const url = new URL(apiBase + businessApi + '/' + id);
+    const url = new URL(apiBase + headquartersApi + '/' + id);
     return {call: axios.get(url.toString(), { signal: controller.signal }), controller };
 }

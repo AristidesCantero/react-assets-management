@@ -4,6 +4,9 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import { Business } from '../../../models/Interfaces/LocationInterfaces.js';
+import { getBusiness, createBusiness, deleteBusiness, updateBusiness} from 'services/BusinessConsumer.js';
+import { useAsync, useFetchAndLoad } from "../../../hooks/index.js";
+import { AxiosCall } from 'models/axios-call.models.js';
 
 
 
@@ -13,6 +16,12 @@ interface propsBusinessCreate {
     apiInfo: { url: string,  base: [string, ...string[]],  id?: number};
     crudType: 'create' | 'update' | 'delete' | 'view';
     sendAndShowAlertMessage: (variant: typeof variantTypes[number], message: string, heading: string) => void;
+    crudApiCalls?: {
+        create: () => void;
+        update: (id:number) => void;
+        delete: (id:number) => void;
+        view: (id:number) => void;
+    }
 }
 
 const crudToMethod: { [key in propsBusinessCreate['crudType']]: 'post' | 'put' | 'delete' | 'get' } = {
@@ -52,7 +61,10 @@ let BusinessCrud: React.FC<propsBusinessCreate> = ({ isOpen, onHide, apiInfo, cr
         },
       });
 
+    const {loading, callEndpoint} = useFetchAndLoad();
 
+
+    //if the crudType is 'view' or 'delete' then the form is disabled
     useEffect(() => { 
         if ((crudType === 'view') || (crudType === 'delete')) {setDisabled(true); return;}
         setDisabled(false);
@@ -69,35 +81,44 @@ let BusinessCrud: React.FC<propsBusinessCreate> = ({ isOpen, onHide, apiInfo, cr
         
     },[apiInfo.id]);
 
-    useEffect(() => {
-        if (apiUrl === '') {return;}
-        getBusinessData();
-    },[apiUrl]);
+    
 
-    function getBusinessData() {
+
+
+    const getApiData = async (apiCall: () => AxiosCall<any>) => {
+        return await callEndpoint(apiCall());
+    }
+
+
+
+    const getBusinessFromApi = () => {
         if (crudType === 'create') 
             { 
                 setFormData(defaultBusiness);
                 setDefaultData(defaultBusiness);
-                return; 
             }
-        
-        axios.request({url: apiUrl, method: 'get', headers: { 'Content-Type': 'application/json' }, timeout: 1000 })
-        .then(response => response.data)
-        .then((data) => {
-            formik.setValues({ 
-            name: data.name || '',
-            tin: data.tin || '',
-            utr: data.utr || '' });
-            setFormData(data as Business);
-            setDefaultData(data as Business);
-        })
-        .then(() => {setHasData(true); })
-        .catch((error) => {
+        return getBusiness(new URL(apiUrl), {timeout: 3000, headers:{ 'Content-Type': 'application/json' }}).call
+    };
+
+    //useAsync to get the data from the API, activates when the apiUrl changes
+    useAsync(getBusinessFromApi, getBusinessData,() => {}, [apiUrl], apiUrl === '');
+
+    function getBusinessData(data: any) {
+        if (crudType === 'create')  return;  
+        if (data === undefined || data === null || data === 'error') {
             onHideSelf('danger', 'Error al cargar los datos', 'Error');
+            return;
+        }
+        
+        try {
+            formik.setValues({ name: data.name || '', tin: data.tin || '', utr: data.utr || '' });
+            setFormData(data as Business);
+            setDefaultData(data as Business);setHasData(true);
+        } catch (error) {
             console.error(error);
+            onHideSelf('danger', 'Error al cargar o comprender los datos', 'Error');
             setHasData(false);
-        });
+        }
     }         
 
     function onHideSelf(variant: typeof variantTypes[number], message: string, heading: string) {
@@ -125,7 +146,6 @@ let BusinessCrud: React.FC<propsBusinessCreate> = ({ isOpen, onHide, apiInfo, cr
         let message = '';
         let heading = '';
         
-
         if(crudType === 'view') 
             { 
                 message = 'Retorno a la aplicacion';
@@ -135,26 +155,30 @@ let BusinessCrud: React.FC<propsBusinessCreate> = ({ isOpen, onHide, apiInfo, cr
                 return;
             }
 
-            axios.request({ url: apiUrl, method: httpMethod, data: jsonValue, timeout: 1000,
-                            headers: { 'Content-Type': 'application/json' } })
-            .then(response => response.data)
-            .then((data) => {
-                console.log(crudTranslation)
-                message = 'La empresa "'+data.name+'" ha sido '+crudTranslation[0]+' correctamente';
-                heading = 'Empresa '+crudTranslation[0];
-                variant = 'success';
-                onHideSelf(variant, message, heading);
-            }).catch((error) => {console.log('error en empresa en '+httpMethod); console.log(error); onHideSelf(onError().variant, onError().message, onError().heading) });
+        let businessId = apiInfo.id ? apiInfo.id : 0;
+        let params = { timeout: 3000, headers: { 'Content-Type': 'application/json' } }
+        
+        let async_axios_call = async () => {
+            if (crudType === 'create') { return createBusiness(values, params).call; } 
+            else if (crudType === 'update') { return updateBusiness(businessId ,values, params).call; } 
+            else { return deleteBusiness(businessId, params).call; }
+        }
+
+        async_axios_call()
+        .then(response => response.data)
+        .then((data) => {
+            message = 'La empresa "'+data.name+'" ha sido '+crudTranslation[0]+' correctamente';
+            heading = 'Empresa '+crudTranslation[0];
+            variant = 'success';
+            onHideSelf(variant, message, heading);
+        }).catch((error) => {
+            onHideSelf(onError().variant, onError().message, onError().heading) 
+        });
 
 
     }
 
-    //function called for the form elements to update the form data
-    function onChangeField(event: any, field: string) {
-            setFormData({...formData, [field]: event.target.value});
-        }
-    
-    // useEffect(() => {console.log(formData)},[formData]);
+
 
 
 

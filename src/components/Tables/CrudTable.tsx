@@ -1,7 +1,7 @@
 import React from "react";
 import Filter from "./columnFilters.js";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router";
 import es from "../../utilities/lang/es.js";
 
@@ -30,6 +30,10 @@ interface CrudTableProps {
     }
     discardedColumns?: string[];
     redirect?: string;
+    formatAs?: {
+        date?: string[]; 
+        phone?: string[];
+    }
 }
 
 interface CrudTableState {
@@ -39,7 +43,7 @@ interface CrudTableState {
 
 
 const CrudTable: React.FC<CrudTableProps> = ({ modelAdapter, apiCall, objectType, setHandle, 
-    searchableColumns, discardedColumns, handleCrudContext, dialogVisible, redirect}) => {
+    searchableColumns, discardedColumns, handleCrudContext, dialogVisible, redirect, formatAs}) => {
         
 
     const [elements, setElements] = useState<any[]>([]);
@@ -85,13 +89,13 @@ const CrudTable: React.FC<CrudTableProps> = ({ modelAdapter, apiCall, objectType
         }, 
         initialState: {
             pagination: pagination,
-            columnVisibility: {
-                id: false,
-                name: false,
-                description: false,
-                created_at: false,
-                updated_at: false
-            },
+            // columnVisibility: {
+            //     id: false,
+            //     name: false,
+            //     description: false,
+            //     created_at: false,
+            //     updated_at: false
+            // },
         }
     });
 
@@ -104,7 +108,7 @@ const CrudTable: React.FC<CrudTableProps> = ({ modelAdapter, apiCall, objectType
 
     const {Create, Update, Delete, View } = setHandle;
 
-
+    //create buttons for select specific page
     useEffect(() => {
         let start = Math.max(0, currentPaginationPage - Math.floor(paginationGroupLimit / 2));
         let end = Math.min(start + paginationGroupLimit, table.getPageCount()+1);
@@ -133,26 +137,34 @@ const CrudTable: React.FC<CrudTableProps> = ({ modelAdapter, apiCall, objectType
 
 
     useEffect(() => {
-        console.log(elements);
         const newColumns = Object.keys(elements[0] || {}).map((key) => ({
             header: es[key] || key, //key.charAt(0).toUpperCase() + key.slice(1),
             accessorKey: key,
             footer: 'final ' + key,
             cell: (info: any) => {
-            const value = info.getValue();
-            return dayjs(value, 'YYYY-MM-DD', true).isValid() && key!=='id' ? dayjs(value).format('DD/MM/YYYY') : value;
+                const value = info.getValue();
+                const formatedAsDate = formatAs?.date || [];
+                const formatedAsPhone = formatAs?.phone || [];
+                if (formatedAsDate.includes(key)) {
+                    return dayjs(value).format('YYYY-MM-DD');
+                }
+                if (formatedAsPhone.includes(key)) {
+                    return value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+                }
+                
+            return value;
             }
 
         }));
         setColumns(newColumns);
     }, [elements]);
 
-
     const getApiData = async () => {
         return await callEndpoint(apiCall());
     }
 
     const adaptData = (data: any) => {
+            console.log('adaptData');
             let adaptedData = data.map((item: any) => { return BusinessAdapterInstance.adapt(item); });
             setElements(adaptedData);
     }
@@ -260,7 +272,6 @@ const CrudTable: React.FC<CrudTableProps> = ({ modelAdapter, apiCall, objectType
                                                     </div>
                                             </td>
                                         ))}
-                                        
                                         {Update && (
                                             <td className="border-b border-slate-200">
                                                 <div className="text-sm font-medium leading-5 text-center whitespace-no-wrap border-gray-200 ">

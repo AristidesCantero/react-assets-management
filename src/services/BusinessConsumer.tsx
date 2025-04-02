@@ -13,21 +13,26 @@ export const getAllBusiness = () => {
     return {call: axios.get(url.toString(), { signal: controller.signal }), controller };
 }   
 
-export const getBusiness = (id: number) => {
+export const getBusiness = (url : URL, params?: {timeout?: number, headers?: {}}) => {
     const controller = loadAbort();
-    const url = new URL(apiBase + businessApi + '/' + id);
-    return {call: axios.get(url.toString(), { signal: controller.signal }), controller };
+    return {call: axios.get(url.toString(), {signal: controller.signal, params }), controller };
 }
 
-export const createBusiness = (business: Business) => {
+export const createBusiness = (business: JSON, params?: {timeout?: number, headers?: {}}) => {
     const controller = loadAbort();
     const url = new URL(apiBase + businessApi);
     return {call: axios.post(url.toString(), business, { signal: controller.signal }), controller };
 }
 
-export const updateBusiness = (id:number, business: Business) => {
+export const updateBusiness = (id:number, business: String, params?: {timeout?: number, headers?: {}}) => {
     const controller = loadAbort();
     const url = new URL(apiBase + businessApi + '/' + id);
     return {call: axios.put(url.toString(), business, { signal: controller.signal }), controller };
+}
+
+export const deleteBusiness = (id: number, params?: {timeout?: number, headers?: {}}) => {
+    const controller = loadAbort();
+    const url = new URL(apiBase + businessApi + '/' + id);
+    return {call: axios.delete(url.toString(), { signal: controller.signal }), controller };
 }
    

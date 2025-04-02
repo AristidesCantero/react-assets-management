@@ -1,4 +1,4 @@
-import { AxiosCall } from '../models';
+import { AxiosCall } from '../models/index.js';
 import { AxiosResponse } from 'axios';
 import { useEffect, useState } from 'react';
 

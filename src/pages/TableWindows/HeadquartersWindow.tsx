@@ -94,15 +94,16 @@ setHandle = {
                   objectType={{} as Headquarters} 
                   setHandle={this.setHandle}   
                   discardedColumns={['id', 'creation_date', 'update_date']}
+                  formatAs={{phone:['phone']}}
               />
 
-              <HeadquartersCrud 
+              {/* <HeadquartersCrud 
                   apiInfo={ {url: 'http://127.0.0.1:8000/',  base: ['locations','business'], 
                     id:this.state.handleCrudContext.handleId}}
                   isOpen={this.state.dialogVisible}
                   onHide={this.setCrudDialogInvisible}
                   crudType={this.state.handleCrudContext.handleCrud || 'view'} 
-                  sendAndShowAlertMessage={this.sendAndShowAlertMessage}/>
+                  sendAndShowAlertMessage={this.sendAndShowAlertMessage}/> */}
               
 
               {/* <p>Loader Data: {JSON.stringify(this.props.loaderData)}</p>
