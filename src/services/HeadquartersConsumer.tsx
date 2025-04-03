@@ -18,6 +18,6 @@ export const getAllHeadquarters = () => {
 
 export const getBusinessHeadquarters = (id: number) => {
     const controller = loadAbort();
-    const url = new URL(apiBase + headquarterApi + '/' + id);
+    const url = new URL(apiBase + headquartersApi + '/' + id);
     return {call: axios.get(url.toString(), { signal: controller.signal }), controller };
 }

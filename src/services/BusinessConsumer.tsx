@@ -22,7 +22,7 @@ export const getBusiness = (id:number, params?: {timeout?: number, headers?: {}}
 
 export const createBusiness = (business: JSON, params?: {timeout?: number, headers?: {}}) => {
     const controller = loadAbort();
-    const url = new URL(apiBase + businessApi);
+    const url = new URL(apiBase + businessesApi);
     return {call: axios.post(url.toString(), business, { signal: controller.signal }), controller };
 }
 

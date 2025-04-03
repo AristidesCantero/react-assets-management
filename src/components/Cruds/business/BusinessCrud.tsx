@@ -37,9 +37,9 @@ const crudTranslations: { [key in propsBusinessCreate['crudType']]: [string, typ
 };
 
 const validationSchema = Yup.object({
-    name: Yup.string().min(2, "Name must be at least 2 characters").matches(/[A-Za-z0-9ñÑ.\-]$/, "No se permiten caracteres especiales").required("Name is required"),
-    tin: Yup.string().min(2, "TIN must be at least 2 characters").matches(/[A-Za-z0-9ñÑ.\-]$/, "No se permiten caracteres especiales").required("TIN is required"),
-    utr: Yup.string().min(2, "UTR must be at least 2 characters").matches(/[A-Za-z0-9Ññ.\-]$/, "No se permiten caracteres especiales").required("UTR is required")
+    name: Yup.string().min(2, "Name must be at least 2 characters").matches(/[A-Za-z0-9ñÑ.\-]$/, "No se permiten caracteres especiales").required("Campo nombre es requerido"),
+    tin: Yup.string().min(2, "TIN must be at least 2 characters").matches(/[A-Za-z0-9ñÑ.\-]$/, "No se permiten caracteres especiales").required("Campo TIN es requerido"),
+    utr: Yup.string().min(2, "UTR must be at least 2 characters").matches(/[A-Za-z0-9Ññ.\-]$/, "No se permiten caracteres especiales").required("Campo UTR es requerido")
 });
 
 let BusinessCrud: React.FC<propsBusinessCreate> = ({ isOpen, onHide, apiInfo, crudType, sendAndShowAlertMessage }) => {
