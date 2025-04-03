@@ -117,7 +117,6 @@ const CrudTable: React.FC<CrudTableProps> = ({ modelAdapter, apiCall, objectType
             start = Math.max(1, end - paginationGroupLimit);
         }
         let buttons: any[] = [];
-        console.log('start: ', start, 'end: ', end);
 
         for (let i = start; i < end-1; i++) {
             buttons.push(
@@ -164,7 +163,6 @@ const CrudTable: React.FC<CrudTableProps> = ({ modelAdapter, apiCall, objectType
     }
 
     const adaptData = (data: any) => {
-            console.log('adaptData');
             let adaptedData = data.map((item: any) => { return BusinessAdapterInstance.adapt(item); });
             setElements(adaptedData);
     }

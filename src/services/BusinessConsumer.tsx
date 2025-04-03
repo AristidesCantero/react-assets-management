@@ -5,16 +5,18 @@ import { loadAbort } from "../utilities/LoadAbortAxios.utilities.js";
 import axios from "axios";
 
 const apiBase = "http://localhost:8000/";
+const businessesApi = "locations/businesses";
 const businessApi = "locations/business";
 
 export const getAllBusiness = () => {
     const controller = loadAbort();
-    const url = new URL(apiBase + businessApi);
+    const url = new URL(apiBase + businessesApi);
     return {call: axios.get(url.toString(), { signal: controller.signal }), controller };
 }   
 
-export const getBusiness = (url : URL, params?: {timeout?: number, headers?: {}}) => {
+export const getBusiness = (id:number, params?: {timeout?: number, headers?: {}}) => {
     const controller = loadAbort();
+    const url = new URL(apiBase + businessApi + '/' + id);
     return {call: axios.get(url.toString(), {signal: controller.signal, params }), controller };
 }
 

@@ -48,9 +48,7 @@ let BusinessCrud: React.FC<propsBusinessCreate> = ({ isOpen, onHide, apiInfo, cr
     let [apiUrl, setApiUrl] = React.useState<string>('');
     let [formData, setFormData] = React.useState<Business>({ id: 0, name: '', tin: '', utr: '', creation_date: new Date(), update_date: new Date() });
     let [defaultData, setDefaultData] = React.useState<Business>({ id: 0, name: '', tin: '', utr: '', creation_date: new Date(), update_date: new Date() });
-    let [hasData, setHasData] = React.useState<boolean>(false);
     let [disabled, setDisabled] = React.useState<boolean>(false);
-    let [isSubmitable, setIsSubmitable] = React.useState<boolean>(false);
 
     const formik = useFormik({
         initialValues: { name: "", tin: "", utr: "" },
@@ -90,34 +88,29 @@ let BusinessCrud: React.FC<propsBusinessCreate> = ({ isOpen, onHide, apiInfo, cr
     }
 
 
-
     const getBusinessFromApi = () => {
-        if (crudType === 'create') 
-            { 
-                setFormData(defaultBusiness);
-                setDefaultData(defaultBusiness);
-            }
-        return getBusiness(new URL(apiUrl), {timeout: 3000, headers:{ 'Content-Type': 'application/json' }}).call
+        return getBusiness(apiInfo.id || 0 ,{timeout: 3000, headers:{ 'Content-Type': 'application/json' }}).call
     };
 
     //useAsync to get the data from the API, activates when the apiUrl changes
-    useAsync(getBusinessFromApi, getBusinessData,() => {}, [apiUrl], apiUrl === '');
+    useAsync(getBusinessFromApi, getBusinessData,() => {}, [apiInfo.id], crudType === 'create' || (apiInfo.id ?? 0) < 1);    
 
     function getBusinessData(data: any) {
-        if (crudType === 'create')  return;  
-        if (data === undefined || data === null || data === 'error') {
-            onHideSelf('danger', 'Error al cargar los datos', 'Error');
-            return;
-        }
+        if (crudType === 'create' || data === undefined || data === null || data === 'error')  
+            { 
+                formik.setValues({ name: data.name || '', tin: data.tin || '', utr: data.utr || '' });
+                setFormData(defaultBusiness);
+                setDefaultData(defaultBusiness);
+                return;
+            }  
         
         try {
             formik.setValues({ name: data.name || '', tin: data.tin || '', utr: data.utr || '' });
             setFormData(data as Business);
-            setDefaultData(data as Business);setHasData(true);
+            setDefaultData(data as Business);
         } catch (error) {
             console.error(error);
             onHideSelf('danger', 'Error al cargar o comprender los datos', 'Error');
-            setHasData(false);
         }
     }         
 
@@ -125,7 +118,6 @@ let BusinessCrud: React.FC<propsBusinessCreate> = ({ isOpen, onHide, apiInfo, cr
         setApiUrl('');
         setFormData({ id: 0, name: '', tin: '', utr: '', creation_date: new Date(), update_date: new Date() });
         setDefaultData({ id: 0, name: '', tin: '', utr: '', creation_date: new Date(), update_date: new Date() });
-        setHasData(false);
         onHide();
         sendAndShowAlertMessage(variant, message, heading);
         

@@ -7,6 +7,7 @@ import axios from "axios";
 
 const apiBase = "http://localhost:8000/";
 const headquartersApi = "locations/headquarters";
+const headquarterApi = "locations/headquarter";
 
 
 export const getAllHeadquarters = () => {
@@ -17,6 +18,6 @@ export const getAllHeadquarters = () => {
 
 export const getBusinessHeadquarters = (id: number) => {
     const controller = loadAbort();
-    const url = new URL(apiBase + headquartersApi + '/' + id);
+    const url = new URL(apiBase + headquarterApi + '/' + id);
     return {call: axios.get(url.toString(), { signal: controller.signal }), controller };
 }
