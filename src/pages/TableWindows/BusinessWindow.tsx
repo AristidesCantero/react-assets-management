@@ -46,8 +46,7 @@ class BusinessWindow extends BaseWindow {
                             discardedColumns={['id', 'creation_date', 'update_date']}
                             redirect='Headquarters'/>
                         <BusinessCrud
-                            apiInfo={ {url: 'http://127.0.0.1:8000/',  base: ['locations','business'], 
-                                id:this.state.handleCrudContext.handleId}}
+                            apiInfo={ { id:this.state.handleCrudContext.handleId}}
                             isOpen={this.state.dialogVisible}
                             onHide={this.setCrudDialogInvisible}
                             crudType={this.state.handleCrudContext.handleCrud || 'view'} 

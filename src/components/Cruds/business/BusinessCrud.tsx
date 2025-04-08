@@ -1,8 +1,7 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {Button, Modal} from 'react-bootstrap';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
 import { Business } from '../../../models/Interfaces/LocationInterfaces.js';
 import { getBusiness, createBusiness, deleteBusiness, updateBusiness} from 'services/BusinessConsumer.js';
 import { useAsync, useFetchAndLoad } from "../../../hooks/index.js";
@@ -13,7 +12,7 @@ import { AxiosCall } from 'models/axios-call.models.js';
 interface propsBusinessCreate {
     isOpen: boolean;
     onHide: () => void;
-    apiInfo: { url: string,  base: [string, ...string[]],  id?: number};
+    apiInfo: {id?: number};
     crudType: 'create' | 'update' | 'delete' | 'view';
     sendAndShowAlertMessage: (variant: typeof variantTypes[number], message: string, heading: string) => void;
     crudApiCalls?: {
@@ -45,7 +44,6 @@ const validationSchema = Yup.object({
 let BusinessCrud: React.FC<propsBusinessCreate> = ({ isOpen, onHide, apiInfo, crudType, sendAndShowAlertMessage }) => {
 
     //define states for form data
-    let [apiUrl, setApiUrl] = React.useState<string>('');
     let [formData, setFormData] = React.useState<Business>({ id: 0, name: '', tin: '', utr: '', creation_date: new Date(), update_date: new Date() });
     let [defaultData, setDefaultData] = React.useState<Business>({ id: 0, name: '', tin: '', utr: '', creation_date: new Date(), update_date: new Date() });
     let [disabled, setDisabled] = React.useState<boolean>(false);
@@ -54,7 +52,6 @@ let BusinessCrud: React.FC<propsBusinessCreate> = ({ isOpen, onHide, apiInfo, cr
         initialValues: { name: "", tin: "", utr: "" },
         validationSchema: validationSchema,
         onSubmit: values => {
-            // console.log(values.name+' '+values.tin+" "+values.utr+' \n'+apiUrl+' \n'+crudToMethod[crudType]);
             onSubmitToApi(values);
         },
       });
@@ -66,20 +63,7 @@ let BusinessCrud: React.FC<propsBusinessCreate> = ({ isOpen, onHide, apiInfo, cr
     useEffect(() => { 
         if ((crudType === 'view') || (crudType === 'delete')) {setDisabled(true); return;}
         setDisabled(false);
-    },[crudType]);
-
-    //useEffect to define the API URL and if there is a id to get the data
-    useEffect(() => {
-        if(crudType === 'create') 
-            {
-                setApiUrl(apiInfo ? apiInfo.url + apiInfo.base.join('/') : '');
-                 return;
-            }
-        setApiUrl(apiInfo ? apiInfo.url + apiInfo.base.join('/') + (apiInfo.id ? '/'+apiInfo.id : '') : '');
-        
-    },[apiInfo.id]);
-
-    
+    },[crudType]);  
 
 
 
@@ -92,7 +76,7 @@ let BusinessCrud: React.FC<propsBusinessCreate> = ({ isOpen, onHide, apiInfo, cr
         return getBusiness(apiInfo.id || 0 ,{timeout: 3000, headers:{ 'Content-Type': 'application/json' }}).call
     };
 
-    //useAsync to get the data from the API, activates when the apiUrl changes
+    //useAsync to get the data from the API, activates when the apiInfo.id changes
     useAsync(getBusinessFromApi, getBusinessData,() => {}, [apiInfo.id], crudType === 'create' || (apiInfo.id ?? 0) < 1);    
 
     function getBusinessData(data: any) {
@@ -109,13 +93,11 @@ let BusinessCrud: React.FC<propsBusinessCreate> = ({ isOpen, onHide, apiInfo, cr
             setFormData(data as Business);
             setDefaultData(data as Business);
         } catch (error) {
-            console.error(error);
             onHideSelf('danger', 'Error al cargar o comprender los datos', 'Error');
         }
     }         
 
     function onHideSelf(variant: typeof variantTypes[number], message: string, heading: string) {
-        setApiUrl('');
         setFormData({ id: 0, name: '', tin: '', utr: '', creation_date: new Date(), update_date: new Date() });
         setDefaultData({ id: 0, name: '', tin: '', utr: '', creation_date: new Date(), update_date: new Date() });
         onHide();

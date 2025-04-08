@@ -97,13 +97,12 @@ setHandle = {
                   formatAs={{phone:['phone']}}
               />
 
-              {/* <HeadquartersCrud 
-                  apiInfo={ {url: 'http://127.0.0.1:8000/',  base: ['locations','business'], 
-                    id:this.state.handleCrudContext.handleId}}
+              <HeadquartersCrud 
+                  apiInfo={ { id:this.state.handleCrudContext.handleId, parentId: Number(this.props.params.headquarterId)}}
                   isOpen={this.state.dialogVisible}
                   onHide={this.setCrudDialogInvisible}
                   crudType={this.state.handleCrudContext.handleCrud || 'view'} 
-                  sendAndShowAlertMessage={this.sendAndShowAlertMessage}/> */}
+                  sendAndShowAlertMessage={this.sendAndShowAlertMessage}/>
               
 
               {/* <p>Loader Data: {JSON.stringify(this.props.loaderData)}</p>
