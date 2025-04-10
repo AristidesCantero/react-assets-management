@@ -72,27 +72,28 @@ let HeadquartersCrud: React.FC<propsHeadquartersCreate> = ({ isOpen, onHide, api
         }
 
     const getHeadquarterFromApi = () => {
-            return getHeadquarter(apiInfo.id || 0 ,{timeout: 3000, headers:{ 'Content-Type': 'application/json' }}).call
+            return getHeadquarter(apiInfo.id || 0).call
         };
 
 
     useAsync(getHeadquarterFromApi, getHeadquarterData,() => {}, [apiInfo.id], crudType === 'create' || (apiInfo.id ?? 0) < 1); 
 
     function getHeadquarterData(data:any) {
-        if (crudType === 'create' || data === undefined || data === null || data === 'error')  
+        let hq_data = data['data'];
+        if (crudType === 'create' || hq_data === undefined || hq_data === null || hq_data === 'error')  
                     { 
-                        formik.setValues({ name: data.name || '', address: data.address || '', phone: data.phone || 0 });
+                        formik.setValues({ name: '', address: '', phone: 0 });
                         setFormData(defaultHeadquarter);
                         setDefaultData(defaultHeadquarter);
                         return;
                     }  
                 
                 try {
-                    formik.setValues({ name: data.name || '', address: data.address || '', phone: data.phone || 0 });
+                    formik.setValues({ name: hq_data.name || '', address: hq_data.address || '', phone: hq_data.phone || 0 });
                     setFormData(data as Headquarters);
                     setDefaultData(data as Headquarters);
                 } catch (error) {
-                    onHideSelf('danger', 'Error al cargar o comprender los datos', 'Error');
+                    onHideSelf('danger', 'Error al obtener los datos', 'Error');
                 }
     }         
 

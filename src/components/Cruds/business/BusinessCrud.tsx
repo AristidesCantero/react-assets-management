@@ -79,10 +79,11 @@ let BusinessCrud: React.FC<propsBusinessCreate> = ({ isOpen, onHide, apiInfo, cr
     //useAsync to get the data from the API, activates when the apiInfo.id changes
     useAsync(getBusinessFromApi, getBusinessData,() => {}, [apiInfo.id], crudType === 'create' || (apiInfo.id ?? 0) < 1);    
 
-    function getBusinessData(data: any) {
+    function getBusinessData(bs_data: any) {
+        let data = bs_data['data']
         if (crudType === 'create' || data === undefined || data === null || data === 'error')  
             { 
-                formik.setValues({ name: data.name || '', tin: data.tin || '', utr: data.utr || '' });
+                formik.setValues({ name: '', tin: '', utr: '' });
                 setFormData(defaultBusiness);
                 setDefaultData(defaultBusiness);
                 return;
@@ -93,7 +94,7 @@ let BusinessCrud: React.FC<propsBusinessCreate> = ({ isOpen, onHide, apiInfo, cr
             setFormData(data as Business);
             setDefaultData(data as Business);
         } catch (error) {
-            onHideSelf('danger', 'Error al cargar o comprender los datos', 'Error');
+            onHideSelf('danger', 'Error al obtener los datos del negocio', 'Error');
         }
     }         
 
