@@ -7,8 +7,6 @@ interface RawBusinessData {
     name: string;
     tin: string;
     utr: string;
-    creation_date: Date;
-    update_date: Date;
 }
 
 export class BusinessAdapter implements adaptersInterface{
@@ -18,29 +16,32 @@ export class BusinessAdapter implements adaptersInterface{
             name: typeof String,
             TIN: typeof String,
             UTR: typeof String,
-            creation_date: typeof Date,
-            update_date: typeof Date,
         }
-    
-
-    setted = false
-    value: RawBusinessData = {} as RawBusinessData;
-
-    get FormattedCreationDate(){
-        return new Date( this.value.creation_date).toDateString();
-    }
 
     adapt(data: RawBusinessData) {
-        this.value = data;
+        let value = data;
         
         return {
-            id: this.value.id,
-            name: this.value.name,
-            TIN: this.value.tin,
-            UTR: this.value.utr,
-            creation_date: this.value.creation_date,
-            update_date: this.value.update_date,
+            id: value.id,
+            name: value.name,
+            TIN: value.tin,
+            UTR: value.utr,
         }
+    }
+
+    adaptList(data: RawBusinessData[]) {
+        let values = data;
+        
+        return data.map((item: any) => {
+            let value = Object.values(item)[0] as RawBusinessData;
+            let convert: RawBusinessData = {
+                id: value.id,
+                name: value.name,
+                tin: value.tin,
+                utr: value.utr,
+            };
+            return this.adapt(value);
+        })
     }
     
   

@@ -102,7 +102,7 @@ const CrudTable: React.FC<CrudTableProps> = ({ modelAdapter, apiCall, objectType
     /* END TABLE CONSTANTS */
 
     /* api consuming injections */
-    const BusinessAdapterInstance = modelAdapter;
+    const ModelAdapterInstance = modelAdapter;
     const {loading, callEndpoint} = useFetchAndLoad();
     /* END api consuming variables */
 
@@ -145,10 +145,10 @@ const CrudTable: React.FC<CrudTableProps> = ({ modelAdapter, apiCall, objectType
                 const formatedAsDate = formatAs?.date || [];
                 const formatedAsPhone = formatAs?.phone || [];
                 if (formatedAsDate.includes(key)) {
-                    return dayjs(value).format('YYYY-MM-DD');
+                    return value === undefined ? '' : dayjs(value).format('YYYY-MM-DD');
                 }
                 if (formatedAsPhone.includes(key)) {
-                    return value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+                    return value === undefined ? '' :value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
                 }
                 
             return value;
@@ -163,7 +163,8 @@ const CrudTable: React.FC<CrudTableProps> = ({ modelAdapter, apiCall, objectType
     }
 
     const adaptData = (data: any) => {
-            let adaptedData = data.map((item: any) => { return BusinessAdapterInstance.adapt(item); });
+            let recieved_data = data['data'];
+            let adaptedData = ModelAdapterInstance.adaptList(recieved_data);
             setElements(adaptedData);
     }
 

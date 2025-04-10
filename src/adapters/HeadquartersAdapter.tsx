@@ -5,8 +5,6 @@ interface RawHeadquartersData {
     address: string,
     name: string,
     phone: number,
-    creation_date: Date,
-    update_date: Date,
     business_key: number
 }
 
@@ -17,31 +15,37 @@ export class HeadquartersAdapter implements adaptersInterface{
             address: typeof String,
             name: typeof String,
             phone: typeof Number,
-            creation_date: typeof Date,
-            update_date: typeof Date,
             business_key: typeof Number
         }
-    
 
-    setted = false
-    value: RawHeadquartersData = {} as RawHeadquartersData;
 
-    FormattedDate(date: Date){
-        return new Date(date).toDateString();
-    }
-
-    adapt(data: RawHeadquartersData) {
-        this.value = data;
+    adapt(data: RawHeadquartersData): {} {
+        let value = data;
         
         return {
-            id: this.value.id,
-            address: this.value.address,
-            name: this.value.name,
-            phone: this.value.phone,
-            creation_date: this.FormattedDate(this.value.creation_date),
-            update_date: this.FormattedDate(this.value.update_date),
-            business_key: this.value.business_key
+            id: value.id,
+            address: value.address,
+            name: value.name,
+            phone: value.phone,
+            business_key: value.business_key
         }
+    }
+
+    adaptList(data: RawHeadquartersData[]): {} {
+        let values = data;
+        
+        return data.map((item: any) => {
+            let value = Object.values(item)[0] as RawHeadquartersData;
+            let convert: RawHeadquartersData = {
+                id: value.id,
+                address: value.address,
+                name: value.name,
+                phone: value.phone,
+                business_key: value.business_key
+            };
+            return this.adapt(value);
+        })
+        
     }
     
   

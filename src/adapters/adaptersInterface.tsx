@@ -1,10 +1,9 @@
 
 interface adaptersInterface{
     dataTypes: {};
-    setted: boolean;
-    value: {};
 
     adapt(data: any): {};
+    adaptList(data: any[]): any;
 }
 
 export default adaptersInterface;
